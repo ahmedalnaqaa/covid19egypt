@@ -18,41 +18,73 @@
                 body {
                     font-family: 'Tajawal', sans-serif;
                 }
+                .app-title {
+                    font-size: 25pt;
+                }
+                @media (max-width: 479px) {
+                    .navbar-header {
+                        width: 100%;
+                    }
+                    .navbar-toggler {
+                        float: left;
+                    }
+                    .app-title {
+                        float: right;
+                    }
+                }
             </style>
         {% endblock %}
     </head>
     <body>
     {% block navbar%}
-        <div class="d-flex flex-column flex-md-row align-items-center p-1 px-md-4 mb-3 bg-white border-bottom shadow-sm">
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ app.user.username }}
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ path('fos_user_profile_show') }}">الصفحة الشخصية</a>
-                        <a class="dropdown-item" href="{{ path('fos_user_profile_edit') }}">الإعدادات</a>
-                        <a class="dropdown-item" href="{{ path('fos_user_security_logout') }}">خروج</a>
-                    </div>
-                </div>
-            {% endif %}
-            <nav class="my-2 my-md-0 mr-md-3">
-                {% if not is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    <a class="btn btn-outline-primary" href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
-                    <a class="btn btn-outline-primary" href="{{ path('fos_user_registration_register') }}">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
-                {% endif %}
-                <a class="p-2 text-dark" href="{{path('corona-test')}}"><span class="p-3 badge badge-warning">إختبر نفسك</span></a>
-                <a class="p-2 text-dark" href="{{path('questions')}}">أسئلة عن فيرس كورونا</a>
-                <a class="p-2 text-dark" href="{{path('advices')}}">نصائح هامة</a>
-                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    <a class="p-2 text-dark" href="{{path('user-tests')}}">نتائج إختباراتي</a>
-                {% endif %}
-            </nav>
 
-            <h2 class="my-0 ml-md-auto font-weight-normal"><a href="{{path('index')}}"><span class="badge badge-danger">كوڤيد-19 مصر</span>
-                </a>
-            </h2>
-        </div>
+        <nav class="navbar navbar-expand-lg navbar-light sticky-top" style="background-color: #ececec">
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="nav navbar-nav mr-auto">
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ app.user.username }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ path('fos_user_profile_show') }}">الصفحة الشخصية</a>
+                                <a class="dropdown-item" href="{{ path('fos_user_profile_edit') }}">الإعدادات</a>
+                                <a class="dropdown-item" href="{{ path('fos_user_security_logout') }}">خروج</a>
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if not is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        <li class="nav-item">
+                            <a class="nav-link text-primary" href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-primary" href="{{ path('fos_user_registration_register') }}">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{path('questions')}}">أسئلة عن فيرس كورونا</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{path('advices')}}">نصائح هامة</a>
+                    </li>
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{path('user-tests')}}">نتائج إختباراتي</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link text-info" href="{{path('corona-test')}}"><strong class="label label-warning">إختبر نفسك</strong></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-header">
+                <h1 class="app-title navbar-brand font-weight-normal"><a href="{{path('index')}}"><span class="badge badge-danger">كوڤيد-19 مصر</span></a></h1>
+
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button></div>
+        </nav>
     {% endblock %}
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
         {% block header %}
@@ -63,45 +95,11 @@
     {% block body %}
         {% endblock %}
 
-{#        <footer class="pt-4 my-md-5 pt-md-5 border-top">#}
-{#            <div class="row">#}
-{#                <div class="col-12 col-md">#}
-{#                    <img class="mb-2" src="/docs/4.4/assets/brand/bootstrap-solid.svg" alt="" width="24" height="24">#}
-{#                    <small class="d-block mb-3 text-muted">&copy; 2017-2019</small>#}
-{#                </div>#}
-{#                <div class="col-6 col-md">#}
-{#                    <h5>Features</h5>#}
-{#                    <ul class="list-unstyled text-small">#}
-{#                        <li><a class="text-muted" href="#">Cool stuff</a></li>#}
-{#                        <li><a class="text-muted" href="#">Random feature</a></li>#}
-{#                        <li><a class="text-muted" href="#">Team feature</a></li>#}
-{#                        <li><a class="text-muted" href="#">Stuff for developers</a></li>#}
-{#                        <li><a class="text-muted" href="#">Another one</a></li>#}
-{#                        <li><a class="text-muted" href="#">Last time</a></li>#}
-{#                    </ul>#}
-{#                </div>#}
-{#                <div class="col-6 col-md">#}
-{#                    <h5>Resources</h5>#}
-{#                    <ul class="list-unstyled text-small">#}
-{#                        <li><a class="text-muted" href="#">Resource</a></li>#}
-{#                        <li><a class="text-muted" href="#">Resource name</a></li>#}
-{#                        <li><a class="text-muted" href="#">Another resource</a></li>#}
-{#                        <li><a class="text-muted" href="#">Final resource</a></li>#}
-{#                    </ul>#}
-{#                </div>#}
-{#                <div class="col-6 col-md">#}
-{#                    <h5>About</h5>#}
-{#                    <ul class="list-unstyled text-small">#}
-{#                        <li><a class="text-muted" href="#">Team</a></li>#}
-{#                        <li><a class="text-muted" href="#">Locations</a></li>#}
-{#                        <li><a class="text-muted" href="#">Privacy</a></li>#}
-{#                        <li><a class="text-muted" href="#">Terms</a></li>#}
-{#                    </ul>#}
-{#                </div>#}
-{#            </div>#}
-{#        </footer>#}
-        <br/>
-        <br/>
+        <footer class="pt-4 my-md-5 pt-md-5 border-top">
+            <div class="row">
+                <p class="text-center">© 2020 الحقوق محفوظة لـ كوڤيد-19 مصر</p>
+            </div>
+        </footer>
     </div>
     {% if not app.request.attributes.get('_route') == 'corona-test' %}
         <!-- Modal -->
