@@ -30,7 +30,7 @@
                 </h6>
             </div>
         {% elseif test.score == 5 %}
-            <div class="alert alert-info" role="alert">
+            <div class="alert alert-primary" role="alert">
                 <span class="lead">النقاط: {{ test.score }}</span>
                 <h6>
                     <svg class="bi bi-exclamation-triangle" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -52,15 +52,6 @@
                     برجاء التواصل مع الأرقام المعنية لوزارة الصحة (105) لإحتمالية الإصابة .. الحاجة للعلاج وبدء إجراءات العزل الصحي.
                 </h6>
             </div>
-            <div class="alert alert-info" role="alert">
-                <h6>
-                    <svg class="bi bi-x-circle-fill" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M16 8A8 8 0 110 8a8 8 0 0116 0zm-4.146-3.146a.5.5 0 00-.708-.708L8 7.293 4.854 4.146a.5.5 0 10-.708.708L7.293 8l-3.147 3.146a.5.5 0 00.708.708L8 8.707l3.146 3.147a.5.5 0 00.708-.708L8.707 8l3.147-3.146z" clip-rule="evenodd"/>
-                    </svg>
-
-                    برجاء التواصل مع الأرقام المعنية لوزارة الصحة (105) لإحتمالية الإصابة .. الحاجة للعلاج وبدء إجراءات العزل الصحي.
-                </h6>
-            </div>
         {% endif %}
 
         <div class="alert alert-info" role="alert">
@@ -70,15 +61,12 @@
                <li> 5 نقاط: تحتاج إستشارة طبيب هاتفيا والإلتزام بالعزل في المنزل بعيدا عن العائلة</li>
                <li>أكثر من 5 نقاط: قم بالتواصل مع الجهات المعنية لإحتمالية الإصابة - الرقم هو 105</li>
             </ul>
-        </div>
-
-        <div class="alert alert-success" role="alert">
+            <hr/>
             <ul>
                 <li> إذا كنت تريد الإطلاع على أهم النصائح للوقاية من فيرس كورونا  <a href="{{ path('advices') }}">إضغط هنا</a></li>
                 <li>إذا كان لديك أسئلة, قم بقراءة الأسئلة الشائعة <a href="{{ path('questions') }}">من هنا</a></li>
             </ul>
         </div>
-
         <a class="p-2 text-dark" href="{{path('corona-test')}}"><span class="p-3 badge badge-warning">إعادة الإختبار مرة إخرى</span></a>
         <a class="p-2 text-dark" href="{{path('index')}}"><span class="p-3 badge badge-primary">العودة</span></a>
     {% else %}
