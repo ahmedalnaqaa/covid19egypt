@@ -72,7 +72,15 @@
             </ul>
         </div>
 
+        <div class="alert alert-success" role="alert">
+            <ul>
+                <li> إذا كنت تريد الإطلاع على أهم النصائح للوقاية من فيرس كورونا  <a href="{{ path('advices') }}">إضغط هنا</a></li>
+                <li>إذا كان لديك أسئلة, قم بقراءة الأسئلة الشائعة <a href="{{ path('questions') }}">من هنا</a></li>
+            </ul>
+        </div>
+
         <a class="p-2 text-dark" href="{{path('corona-test')}}"><span class="p-3 badge badge-warning">إعادة الإختبار مرة إخرى</span></a>
+        <a class="p-2 text-dark" href="{{path('index')}}"><span class="p-3 badge badge-primary">العودة</span></a>
     {% else %}
         {{ form_start(form) }}
         {{ form_widget(form) }}
