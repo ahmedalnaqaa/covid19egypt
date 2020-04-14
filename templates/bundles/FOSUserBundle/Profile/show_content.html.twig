@@ -1,0 +1,21 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    الصفحة الشخصية
+    |
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-4">صفحتي الشخصية</h1>
+{% endblock %}
+
+{% block body %}
+    <div class="fos_user_user_show">
+        <p>الإسم بالكامل: {{ user.fullName }}</p>
+        <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
+        <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+    </div>
+{% endblock %}

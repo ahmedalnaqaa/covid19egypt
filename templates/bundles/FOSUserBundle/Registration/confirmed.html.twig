@@ -1,0 +1,21 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    إنشاء حساب جديد
+    |
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-4">تسجيل</h1>
+    <p class="lead">تم التسجيل بنجاح</p>
+{% endblock %}
+
+{% block body %}
+    <div class="alert alert-success" role="alert">
+        <p>{{ 'registration.confirmed'|trans({'%username%': user.username}) }}</p>
+        <p><a href="{{ path('index') }}">{{ 'registration.back'|trans }}</a></p>
+    </div>
+{% endblock %}

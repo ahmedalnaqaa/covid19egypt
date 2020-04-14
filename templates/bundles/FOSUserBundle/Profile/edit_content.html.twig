@@ -1,0 +1,24 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    تعديل بيانات حسابك
+    |
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-4">الإعدادات</h1>
+    <p class="lead">تعديل بيانات حسابك</p>
+{% endblock %}
+
+{% block body %}
+    {{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'mr-md-5 mr-5 pr-5  fos_user_profile_edit' } }) }}
+    {{ form_widget(form) }}
+    <div>
+        <input type="submit" class="btn btn-primary" value="{{ 'profile.edit.submit'|trans }}" />
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}

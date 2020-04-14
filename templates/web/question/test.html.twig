@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    إختبار كوڤيد-19 (كورونا)
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-4">إختبار كوڤيد-19 (كورونا)</h1>
+    {% if not is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+{#        <p class="lead">For a better test, you have to <a target="_blank" href="{{ path('fos_user_registration_register') }}">Signup</a> so you can save your daily tests, give you a report about your#}
+{#            status. Signup from <a target="_blank" href="{{ path('fos_user_registration_register') }}">here</a>.</p>#}
+    {% else %}
+{#        <p>It's so important to do that test everyday for you & your family safety</p>#}
+    {% endif %}
+{% endblock %}
+{% block body %}
+    {% if test is defined %}
+        <h2>نتيجة الإختبار:</h2>
+        {% if test.score <= 4 %}
+            <div class="alert alert-success" role="alert">
+                <span class="lead">النقاط: {{ test.score }}</span>
+                <h6>
+                    <svg class="bi bi-check-circle" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L8 9.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+                        <path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/>
+                    </svg>
+
+                    إطمئن أنت في وضع جيد, لا داعي للقلق. فقط إلتزم البيت وإعزل نفسك ذاتياُ.
+                </h6>
+            </div>
+        {% elseif test.score == 5 %}
+            <div class="alert alert-info" role="alert">
+                <span class="lead">النقاط: {{ test.score }}</span>
+                <h6>
+                    <svg class="bi bi-exclamation-triangle" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M7.938 2.016a.146.146 0 00-.054.057L1.027 13.74a.176.176 0 00-.002.183c.016.03.037.05.054.06.015.01.034.017.066.017h13.713a.12.12 0 00.066-.017.163.163 0 00.055-.06.176.176 0 00-.003-.183L8.12 2.073a.146.146 0 00-.054-.057A.13.13 0 008.002 2a.13.13 0 00-.064.016zm1.044-.45a1.13 1.13 0 00-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z" clip-rule="evenodd"/>
+                        <path d="M7.002 12a1 1 0 112 0 1 1 0 01-2 0zM7.1 5.995a.905.905 0 111.8 0l-.35 3.507a.552.552 0 01-1.1 0L7.1 5.995z"/>
+                    </svg>
+
+                    حاول أن تتواصل مع دكتور عبر الهاتف واستشيره في أعراضك بالتفصيل لتطمئن أكثر. إعزل نفسك في البيت حتى تطمئن على إستقرار وضعك الصحي.
+                </h6>
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                <span class="lead">النقاط: {{ test.score }}</span>
+                <h6>
+                    <svg class="bi bi-x-circle-fill" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M16 8A8 8 0 110 8a8 8 0 0116 0zm-4.146-3.146a.5.5 0 00-.708-.708L8 7.293 4.854 4.146a.5.5 0 10-.708.708L7.293 8l-3.147 3.146a.5.5 0 00.708.708L8 8.707l3.146 3.147a.5.5 0 00.708-.708L8.707 8l3.147-3.146z" clip-rule="evenodd"/>
+                    </svg>
+
+                    برجاء التواصل مع الأرقام المعنية لوزارة الصحة (105) لإحتمالية الإصابة .. الحاجة للعلاج وبدء إجراءات العزل الصحي.
+                </h6>
+            </div>
+            <div class="alert alert-info" role="alert">
+                <h6>
+                    <svg class="bi bi-x-circle-fill" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M16 8A8 8 0 110 8a8 8 0 0116 0zm-4.146-3.146a.5.5 0 00-.708-.708L8 7.293 4.854 4.146a.5.5 0 10-.708.708L7.293 8l-3.147 3.146a.5.5 0 00.708.708L8 8.707l3.146 3.147a.5.5 0 00.708-.708L8.707 8l3.147-3.146z" clip-rule="evenodd"/>
+                    </svg>
+
+                    برجاء التواصل مع الأرقام المعنية لوزارة الصحة (105) لإحتمالية الإصابة .. الحاجة للعلاج وبدء إجراءات العزل الصحي.
+                </h6>
+            </div>
+        {% endif %}
+
+        <div class="alert alert-info" role="alert">
+            <p>طريقة حساب النقاط</p>
+            <ul>
+               <li>4 نقاط أو أقل: تحتاج لعزل نفسك ذاتيا في المنزل</li>
+               <li> 5 نقاط: تحتاج إستشارة طبيب هاتفيا والإلتزام بالعزل في المنزل بعيدا عن العائلة</li>
+               <li>أكثر من 5 نقاط: قم بالتواصل مع الجهات المعنية لإحتمالية الإصابة - الرقم هو 105</li>
+            </ul>
+        </div>
+
+        <a class="p-2 text-dark" href="{{path('corona-test')}}"><span class="p-3 badge badge-warning">إعادة الإختبار مرة إخرى</span></a>
+    {% else %}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+
+        <div>
+            <input type="submit" class="btn btn-primary" value="عرض النتيجة"/>
+        </div>
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}

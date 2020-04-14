@@ -1,0 +1,42 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    إختباراتي
+    |
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-4">إختباراتي</h1>
+{% endblock %}
+
+{% block body %}
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">الحالة</th>
+            <th scope="col">النقاط</th>
+            <th scope="col">تاريخ الإختبار</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for userTest in userTests %}
+            <tr>
+                <th scope="row">
+                    {% if userTest.score <= 4 %}
+                        <span class="badge badge-success">إالتزم البيت (عزل ذاتي)</span>
+                    {% elseif userTest.score == 5  %}
+                        <span class="badge badge-warning">إالتزم البيت واستشير الطبيب هاتفيا</span>
+                    {% else %}
+                        <span class="badge badge-danger">قم بالتواصل مع رقم الطوارئ 105 لإحتمالية الإصابة</span>
+                    {% endif %}
+                </th>
+                <td>{{userTest.score}}</td>
+                <td>{{ userTest.createdAt|date('Y-m-d') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

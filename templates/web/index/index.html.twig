@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    تعرف على تحديث الحالات اليومي لفيرس كورونا(كوڤيد-19), التحديثات السابقة وقم بعمل إختبار إصابة لنفسك
+    |
+    {{parent()}}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-5">تحديث حالات فيروس كورونا (كوڤيد-19) في مصر</h1>
+    <p>إجمالي المصابين: <strong>{{ status.confirmed }}</strong>,   حالات الشفاء: <strong>{{ status.recovered }}</strong>, وفيات: <strong>{{ status.deaths }}</strong></p>
+{% endblock %}
+{% block body %}
+    <div class="table-responsive">
+        <table id="egStatus" class="table table-hover table-bordered">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">التاريخ</th>
+                <th scope="col">إجمالي المصابين</th>
+                <th scope="col">حالات جديدة</th>
+                <th scope="col">حالات الشفاء</th>
+                <th scope="col">وفيات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set highDeath = null %}
+            {% for key, row in statusList %}
+                {% if statusList[key|date_modify("-1 day")|date("Y-m-d")] is defined %}
+                    {%  set nextStatus = statusList[key|date_modify("-1 day")|date("Y-m-d")] %}
+                {% endif %}
+                <tr {% if loop.index == 1 %}class="table-warning" {% endif %}>
+                    <th scope="row">{{key}}</th>
+                    <td>
+                        {{ row.confirmed }}
+                    </td>
+                    <td>
+                        {% if nextStatus is defined%}
+                            {{ (row.confirmed - nextStatus.confirmed) }}
+                        {% else %}
+                            {{ row.confirmed }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if nextStatus is defined%}
+                            {{ (row.recovered - nextStatus.recovered) }}
+                        {% else %}
+                            {{ row.recovered }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if nextStatus is defined%}
+                            {{ (row.deaths - nextStatus.deaths) }}
+                        {% else %}
+                            {{ row.deaths }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {#        <div class="card mb-4 shadow-sm">#}
+        {#            <div class="card-header">#}
+        {#                <h4 class="my-0 font-weight-normal">Pro</h4>#}
+        {#            </div>#}
+        {#            <div class="card-body">#}
+        {#                <h1 class="card-title pricing-card-title">$15 <small class="text-muted">/ mo</small></h1>#}
+        {#                <ul class="list-unstyled mt-3 mb-4">#}
+        {#                    <li>20 users included</li>#}
+        {#                    <li>10 GB of storage</li>#}
+        {#                    <li>Priority email support</li>#}
+        {#                    <li>Help center access</li>#}
+        {#                </ul>#}
+        {#                <button type="button" class="btn btn-lg btn-block btn-outline-primary">Get started</button>#}
+        {#            </div>#}
+        {#        </div>#}
+        {#        <div class="card mb-4 shadow-sm">#}
+        {#            <div class="card-header">#}
+        {#                <h4 class="my-0 font-weight-normal">Enterprise</h4>#}
+        {#            </div>#}
+        {#            <div class="card-body">#}
+        {#                <h1 class="card-title pricing-card-title">$29 <small class="text-muted">/ mo</small></h1>#}
+        {#                <ul class="list-unstyled mt-3 mb-4">#}
+        {#                    <li>30 users included</li>#}
+        {#                    <li>15 GB of storage</li>#}
+        {#                    <li>Phone and email support</li>#}
+        {#                    <li>Help center access</li>#}
+        {#                </ul>#}
+        {#                <button type="button" class="btn btn-lg btn-block btn-outline-primary">Contact us</button>#}
+        {#            </div>#}
+        {#        </div>#}
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">هل تريد عمل إختبار لنفسك؟</h5>
+                    <button type="button" class="close float-left m-0 p-1" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>يساعد هذا الإختبار على تقييم وضعك الصحي تجاه الإصابة بفيرس كورونا (كوفيد-19)</p>
+                    <a target="_blank" class=" btn btn-warning text-white" href="{{path('corona-test')}}">إبدأ الإختبار</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        setTimeout(function(){
+            $("#exampleModal").modal('show');
+            }, 10000);
+    </script>
+{% endblock %}
