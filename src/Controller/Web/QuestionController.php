@@ -11,9 +11,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class QuestionController extends AbstractController
@@ -50,10 +48,6 @@ class QuestionController extends AbstractController
             $test->setScore($score);
             $em->persist($test);
             $em->flush();
-            $response = new Response();
-            if (empty($response->headers->getCookies())) {
-                $this->createCookie();
-            }
             return [
                 'test' => $test
             ];
@@ -62,21 +56,5 @@ class QuestionController extends AbstractController
         return [
             'form' => $form->createView()
         ];
-    }
-
-    private function createCookie()
-    {
-        $cookieGuest = array(
-            'name'  => 'didthetest',
-            'value' => '1',
-            'path'  => $this->generateUrl('corona-test'),
-            'time'  => time() + 3600 * 24 * 7
-        );
-
-        $cookie = new Cookie($cookieGuest['name'], $cookieGuest['value'], $cookieGuest['time'], $cookieGuest['path']);
-
-        $response = new Response();
-        $response->headers->setCookie($cookie);
-        $response->send();
     }
 }

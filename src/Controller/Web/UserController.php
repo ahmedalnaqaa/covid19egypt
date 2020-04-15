@@ -3,12 +3,6 @@
 
 namespace App\Controller\Web;
 
-use App\Constants\QuestionsMap;
-use App\Entity\Test;
-use App\Form\QuestionType;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
