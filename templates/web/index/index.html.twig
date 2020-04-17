@@ -5,14 +5,13 @@
     |
     {{parent()}}
 {% endblock %}
-
 {% block header %}
-    <h1 class="display-5">تحديث حالات فيروس كورونا (كوڤيد-19) في مصر</h1>
+    <h1 class="display-5 pt-5">تحديث حالات فيروس كورونا (كوڤيد-19) في مصر</h1>
     <p>
-        إجمالي المصابين: <strong class="text-primary">{{ status.confirmed }}</strong>,
-        حالات نشطة: <strong class="text-warning">{{ status.confirmed - (status.recovered + status.deaths) }}</strong>,
-        حالات الشفاء: <strong class="text-success">{{ status.recovered }}</strong>,
-        وفيات: <strong class="text-danger">{{ status.deaths }}</strong>
+        إجمالي المصابين: <strong class="text-primary">{{ lastCase.totalCases }}</strong>,
+        حالات نشطة: <strong class="text-warning">{{ lastCase.totalCases - (lastCase.totalRecovered + lastCase.totalDeaths) }}</strong>,
+        حالات الشفاء: <strong class="text-success">{{ lastCase.totalRecovered }}</strong>,
+        وفيات: <strong class="text-danger">{{ lastCase.totalDeaths }}</strong>
     </p>
 {% endblock %}
 {% block body %}
@@ -28,41 +27,21 @@
             </tr>
             </thead>
             <tbody>
-            {% set highDeath = null %}
-            {% for key, row in statusList %}
-                {% if statusList[key|date_modify("-1 day")|date("Y-m-d")] is defined %}
-                    {%  set nextStatus = statusList[key|date_modify("-1 day")|date("Y-m-d")] %}
-                {% endif %}
-                <tr {% if loop.index == 1 %}class="table-warning" {% endif %}>
-                    <th scope="row">{{key}}</th>
-                    <td>
-                        {{ row.confirmed }}
-                    </td>
-                    <td>
-                        {% if nextStatus is defined%}
-                            {{ (row.confirmed - nextStatus.confirmed) }}
-                        {% else %}
-                            {{ row.confirmed }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if nextStatus is defined%}
-                            {{ (row.recovered - nextStatus.recovered) }}
-                        {% else %}
-                            {{ row.recovered }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if nextStatus is defined%}
-                            {{ (row.deaths - nextStatus.deaths) }}
-                        {% else %}
-                            {{ row.deaths }}
-                        {% endif %}
-                    </td>
+            {% for case in cases %}
+                <tr {% if lastCase.createdAt == case.createdAt %}class="table-warning"{% endif %}>
+                    <td>{{ case.createdAt|date("Y-m-d") }}</td>
+                    <td>{{ case.totalCases }}</td>
+                    <td>{{ case.newDailyCases }}</td>
+                    <td>{{ case.newDailyRecovered }}</td>
+                    <td>{{ case.newDailyDeaths }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        {# display navigation #}
+        <div class="navigation justify-content-center">
+            {{ knp_pagination_render(cases) }}
+        </div>
     </div>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

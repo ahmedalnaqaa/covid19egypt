@@ -2,8 +2,11 @@
 
 namespace App\Controller\Web;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
@@ -11,15 +14,26 @@ class IndexController extends AbstractController
     /**
      * @Route("/", name="index")
      * @Template()
+     *
+     * @param Request $request
+     * @return array
      */
-    public function index()
+    public function index(Request $request)
     {
-        $lastStatus = $this->getRequest('https://covidapi.info/api/v1/country/EGY/latest');
-        $statusList = array_reverse($this->getRequest('https://covidapi.info/api/v1/country/EGY'));
+        $dql   = "SELECT c FROM App\Entity\Cases c ORDER BY c.createdAt DESC";
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQuery($dql);
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query, /* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            30 /*limit per page*/
+        );
+        $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
 
         return [
-            'status' => reset($lastStatus),
-            'statusList' => $statusList,
+            'lastCase' => reset($lastCase),
+            'cases' => $pagination
         ];
     }
 

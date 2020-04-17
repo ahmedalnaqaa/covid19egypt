@@ -22,4 +22,5 @@ return [
     Sonata\AdminBundle\SonataAdminBundle::class => ['all' => true],
     KunicMarko\SonataAnnotationBundle\SonataAnnotationBundle::class => ['all' => true],
     Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle::class => ['all' => true],
+    Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => ['all' => true],
 ];
