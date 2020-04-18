@@ -16,15 +16,30 @@
                     <h5 class="text-danger"><strong>أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong></h5>
                 </div>
                 <div class="card-body">
-                    <ul class="card-text">
-                        <li> إجمالي المصابين: <strong class="text-primary">{{ lastCase.totalCases }}</strong></li>
-                        <li>حالات نشطة: <strong class="text-warning">{{ lastCase.totalCases - (lastCase.totalRecovered + lastCase.totalDeaths) }}</strong></li>
-                        <li>حالات الشفاء: <strong class="text-success">{{ lastCase.totalRecovered }}</strong></li>
-                        <li>وفيات: <strong class="text-danger">{{ lastCase.totalDeaths }}</strong></li>
-                    </ul>
-                    <p class="card-text">
-                        بين كل مليون شخص يوجد {{ (lastCase.totalCases/100)|round }} مصاب
-                    </p>
+                    <table class="table table-borderless">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">الإصابات</th>
+                            <th scope="col">الشفاء</th>
+                            <th scope="col">الوفاة</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">اليوم</th>
+                            <td>{{ lastCase.newDailyCases }}</td>
+                            <td>{{ lastCase.newDailyRecovered }}</td>
+                            <td>{{ lastCase.newDailyDeaths }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">الإجمالي</th>
+                            <td>{{ lastCase.totalCases }}</td>
+                            <td>{{ lastCase.totalRecovered }}</td>
+                            <td>{{ lastCase.totalDeaths }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                     <a href="{{ path('cases') }}" class="btn btn-danger">إضغط هنا لتصفح جميع التحديثات</a>
                 </div>
             </div>

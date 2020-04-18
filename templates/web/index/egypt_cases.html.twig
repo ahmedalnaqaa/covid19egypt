@@ -13,6 +13,9 @@
         حالات الشفاء: <strong class="text-success">{{ lastCase.totalRecovered }}</strong>,
         وفيات: <strong class="text-danger">{{ lastCase.totalDeaths }}</strong>
     </p>
+    <p>
+        <i> بين كل مليون شخص يوجد {{ (lastCase.totalCases/100)|round }} مصاب</i>
+    </p>
 {% endblock %}
 {% block body %}
     <div class="table-responsive">
