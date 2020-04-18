@@ -7,40 +7,32 @@
 {% endblock %}
 {% block header %}
     <h1 class="display-5 pt-5">تحديث حالات فيروس كورونا (كوڤيد-19) في مصر</h1>
-    <p>
-        إجمالي المصابين: <strong class="text-primary">{{ lastCase.totalCases }}</strong>,
-        حالات نشطة: <strong class="text-warning">{{ lastCase.totalCases - (lastCase.totalRecovered + lastCase.totalDeaths) }}</strong>,
-        حالات الشفاء: <strong class="text-success">{{ lastCase.totalRecovered }}</strong>,
-        وفيات: <strong class="text-danger">{{ lastCase.totalDeaths }}</strong>
-    </p>
 {% endblock %}
 {% block body %}
-    <div class="table-responsive">
-        <table id="egStatus" class="table table-hover table-bordered">
-            <thead class="thead-light">
-            <tr>
-                <th scope="col">التاريخ</th>
-                <th scope="col">إجمالي المصابين</th>
-                <th scope="col">حالات جديدة</th>
-                <th scope="col">حالات الشفاء</th>
-                <th scope="col">وفيات</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for case in cases %}
-                <tr {% if lastCase.createdAt == case.createdAt %}class="table-warning"{% endif %}>
-                    <td>{{ case.createdAt|date("Y-m-d") }}</td>
-                    <td>{{ case.totalCases }}</td>
-                    <td>{{ case.newDailyCases }}</td>
-                    <td>{{ case.newDailyRecovered }}</td>
-                    <td>{{ case.newDailyDeaths }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        {# display navigation #}
-        <div class="navigation justify-content-center">
-            {{ knp_pagination_render(cases) }}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4 box-shadow border-light">
+                <div class="card-header text-bold">
+                    <h5 class="text-danger"><strong>أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong></h5>
+                </div>
+                <div class="card-body">
+                    <ul class="card-text">
+                        <li> إجمالي المصابين: <strong class="text-primary">{{ lastCase.totalCases }}</strong></li>
+                        <li>حالات نشطة: <strong class="text-warning">{{ lastCase.totalCases - (lastCase.totalRecovered + lastCase.totalDeaths) }}</strong></li>
+                        <li>حالات الشفاء: <strong class="text-success">{{ lastCase.totalRecovered }}</strong></li>
+                        <li>وفيات: <strong class="text-danger">{{ lastCase.totalDeaths }}</strong></li>
+                    </ul>
+                    <p class="card-text">
+                        بين كل مليون شخص يوجد {{ (lastCase.totalCases/100)|round }} مصاب
+                    </p>
+                    <a href="{{ path('cases') }}" class="btn btn-danger">إضغط هنا لتصفح جميع التحديثات</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4 border-light">
+                <div id="piechart" class="chart row"></div>
+            </div>
         </div>
     </div>
     <!-- Modal -->
@@ -61,11 +53,82 @@
         </div>
     </div>
 {% endblock %}
+{% block chart %}
+    <h4 class="text-right" style="direction: rtl">
+        <svg class="bi bi-bar-chart-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <rect width="4" height="5" x="1" y="10" rx="1"/>
+            <rect width="4" height="9" x="6" y="6" rx="1"/>
+            <rect width="4" height="14" x="11" y="1" rx="1"/>
+        </svg>
+        رسم تحليلي لمعدل زيادة الحالات الجديدة, حالات الشفاء, وحالات الوفاة
+    </h4>
+    <div id="linechart_material" class="chart row">
+    </div>
+{% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawPieChart);
+
+        function drawPieChart() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['حالات الشفاء', {{ lastCase.totalRecovered }}],
+                ['الوفيات',  {{ lastCase.totalDeaths }}],
+                ['حالات مصابة نشطة', {{ lastCase.totalCases - (lastCase.totalRecovered + lastCase.totalDeaths) }}],
+            ]);
+
+            var options = {
+                colors: ['green', 'red', 'orange']
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+            chart.draw(data, options);
+        }
+
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(drawLineChart);
+
+        function drawLineChart() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', '');
+            data.addColumn('number', 'حالات جديدة');
+            data.addColumn('number', 'حالات الشفاء');
+            data.addColumn('number', 'حالات الوفاة');
+
+            data.addRows([
+                {% for case in cases %}
+                {% set year = case.createdAt|date("Y") %}
+                {% set month = case.createdAt|date("m") - 1 %}
+                {% set day = case.createdAt|date("d") %}
+
+                [
+                    new Date({{ year}}, {{ month }}, {{ day }}),
+                    {{ case.newDailyCases }},
+                    {{ case.newDailyRecovered }},
+                    {{ case.newDailyDeaths }}
+                ]
+                {% if loop.index != cases|length %}, {% endif %}
+                {% endfor %}
+            ]);
+
+            var options = {
+                colors: ['blue', 'green', 'red']
+            };
+
+            var chart = new google.charts.Line(document.getElementById('linechart_material'));
+
+            chart.draw(data, google.charts.Line.convertOptions(options));
+        }
+
         setTimeout(function(){
             $("#exampleModal").modal('show');
-            }, 15000);
+            }, 20000);
     </script>
 {% endblock %}

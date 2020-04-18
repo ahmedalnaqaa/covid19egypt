@@ -2,8 +2,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="description" content="    تعرف على تحديث الحالات اليومي لفيرس كورونا(كوڤيد-19) و التحديثات السابقة وقم بعمل إختبار إصابة لنفسك">
-        <meta name="keywords" content="corona, corona egypt, covid-19, كورونا, كورونا مصر, كوڤيد-19, اختبار كورونا">
+        <meta name="description" content=" تعرف على تحديث الحالات اليومي لفيرس كورونا(كوڤيد-19) و التحديثات السابقة وقم بعمل إختبار إصابة لنفسك">
+        <meta name="keywords" content="corona, corona egypt, covid-19, كورونا, كورونا مصر, كوڤيد-19, اختبار كورونا, أخر مستجدات فيروس كورونا, الأعراض والإحصائيات‎">
         <meta name="author" content="كوڤيد-19 مصر">
         <meta name="viewport" content="width=device-width,initial-scale=1"/>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -18,6 +18,16 @@
                 body {
                     font-family: 'Tajawal', sans-serif;
                 }
+                #piechart{
+                    width: 100%;
+                    min-height: 335px;
+                }
+                #linechart_material {
+                    text-align: center;
+                    margin: 0 auto;
+                    width: 100%;
+                    min-height: 450px;
+                }
                 .app-title {
                     font-size: 25pt;
                 }
@@ -30,6 +40,10 @@
                     }
                     .app-title {
                         float: right;
+                    }
+                    #piechart{
+                        width: 445px;
+                        min-height: 335px;
                     }
                 }
             </style>
@@ -73,10 +87,13 @@
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{path('questions')}}">أسئلة عن فيرس كورونا</a>
+                        <a class="nav-link" title="أهم الأسئلة الشائعة عن فيروس كورونا" href="{{path('questions')}}">أسئلة عن فيرس كورونا</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{path('advices')}}">نصائح هامة</a>
+                        <a class="nav-link" title="نصائح هامة عن الوقاية من فيروس كورونا" href="{{path('advices')}}">نصائح هامة</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" title="تحديث الحالات اليومية لفيروس كورونا في مصر" href="{{path('cases')}}">تحديث الحالات</a>
                     </li>
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                         <li class="nav-item">
@@ -84,12 +101,12 @@
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link text-info" href="{{path('corona-test')}}"><strong class="label label-warning">إختبر نفسك</strong></a>
+                        <a title="اختبار الإصابة بكورونا" class="nav-link text-warning ui-widget-shadow" href="{{path('corona-test')}}"><strong class="label label-warning">إختبر نفسك</strong></a>
                     </li>
                 </ul>
             </div>
             <div class="navbar-header">
-                <h1 class="app-title navbar-brand font-weight-normal"><a href="{{path('index')}}"><span class="badge badge-danger">كوڤيد-19 مصر</span></a></h1>
+                <h1 title="كوڤيد-19 مصر لتحديثات الإصابة اليومية بفيروس كورونا المستجد , عمل إختبار إصابة بفيروس كورونا" class="app-title navbar-brand font-weight-normal"><a href="{{path('index')}}"><span class="badge badge-danger">كوڤيد-19 مصر</span></a></h1>
 
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -104,32 +121,19 @@
     <div class="container mx-auto " style="direction: rtl; text-align: right">
     {% block body %}
         {% endblock %}
+    </div>
 
+    <div class="container  mx-auto char_row">
+        {% block chart %}
+        {% endblock %}
+    </div>
+    <div class="container">
         <footer class="pt-4 my-md-5 pt-md-5 border-top">
             <div class="row">
                 <p class="text-center">© 2020 الحقوق محفوظة لـ كوڤيد-19 مصر</p>
             </div>
         </footer>
     </div>
-    {% if not app.request.attributes.get('_route') == 'corona-test' %}
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">قم بعمل إختبار لنفسك</h5>
-                        <button type="button" class="close float-left m-0 p-1" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <p>يساعد هذا الإختبار على تقييم وضعك الصحي تجاه الإصابة بفيرس كورونا (كوفيد-19)</p>
-                        <a target="_blank" class=" btn btn-warning text-white" href="{{path('corona-test')}}">إبدأ الإختبار</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
         {% block javascripts %}
             <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
             <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

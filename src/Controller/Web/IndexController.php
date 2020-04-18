@@ -2,6 +2,7 @@
 
 namespace App\Controller\Web;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -21,13 +22,40 @@ class IndexController extends AbstractController
     public function index(Request $request)
     {
         $dql   = "SELECT c FROM App\Entity\Cases c ORDER BY c.createdAt DESC";
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery($dql);
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
             $query, /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
-            30 /*limit per page*/
+            45
+        );
+        $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
+
+        return [
+            'lastCase' => reset($lastCase),
+            'cases' => $pagination
+        ];
+    }
+
+    /**
+     * @Route("/covid19-egypt-cases", name="cases")
+     * @Template()
+     * @param Request $request
+     * @return array
+     */
+    public function egyptCases (Request $request)
+    {
+        $dql   = "SELECT c FROM App\Entity\Cases c ORDER BY c.createdAt DESC";
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQuery($dql);
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query, /* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            25
         );
         $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
 
@@ -42,7 +70,7 @@ class IndexController extends AbstractController
      * @Route("/covid19-egypt-questions", name="questions")
      * @Template()
      */
-    public function egyptStatus()
+    public function commonQuestions()
     {
         return [
         ];
