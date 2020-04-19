@@ -3,11 +3,11 @@
 namespace App\Controller\Web;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
@@ -24,23 +24,17 @@ class IndexController extends AbstractController
         $dql   = "SELECT c FROM App\Entity\Cases c ORDER BY c.createdAt DESC";
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
-        $query = $em->createQuery($dql);
-        $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate(
-            $query, /* query NOT result */
-            $request->query->getInt('page', 1), /*page number*/
-            45
-        );
+        $cases = $em->createQuery($dql)->setMaxResults(45)->getArrayResult();
         $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
 
         return [
             'lastCase' => reset($lastCase),
-            'cases' => $pagination
+            'cases' => $cases
         ];
     }
 
     /**
-     * @Route("/covid19-egypt-cases", name="cases")
+     * @Route("/cases", name="cases")
      * @Template()
      * @param Request $request
      * @return array
@@ -62,6 +56,38 @@ class IndexController extends AbstractController
         return [
             'lastCase' => reset($lastCase),
             'cases' => $pagination
+        ];
+    }
+
+    /**
+     * @Route("/cases/{date}", name="show_case", methods={"GET"})
+     * @Template()
+     * @param string $date
+     * @param Request $request
+     * @return array
+     * @throws \Exception
+     */
+    public function showCase ($date ,Request $request)
+    {
+        if(!strtotime($date)){
+            throw new BadRequestHttpException("Bad date format");
+        }
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        $case = $em->getRepository('App:Cases')->findOneBy([
+            'createdAt' => new \DateTime($date)
+        ]);
+        if (!$case) {
+            throw new NotFoundHttpException("Date not found");
+        }
+        $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
+        $dql   = "SELECT c FROM App\Entity\Cases c WHERE  c.createdAt <= ?1 ORDER BY c.createdAt DESC";
+        $cases = $em->createQuery($dql)->setParameter(1, new \DateTime($date))->setMaxResults(45)->getArrayResult();
+
+        return [
+            'case' => $case,
+            'cases' => $cases,
+            'lastCase' => reset($lastCase),
         ];
     }
 

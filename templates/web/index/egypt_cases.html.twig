@@ -32,7 +32,7 @@
             <tbody>
             {% for case in cases %}
                 <tr>
-                    <td class="table-active">{{ case.createdAt|date("Y-m-d") }}</td>
+                    <td class="table-active"><a href="{{ path('show_case', {'date': case.createdAt|date("Y-m-d")}) }}">{{ case.createdAt|date("Y-m-d") }}</a></td>
                     <td class="table-primary">{{ case.totalCases }}</td>
                     <td class="table-warning">{{ case.newDailyCases }}</td>
                     <td class="table-success">{{ case.newDailyRecovered }}</td>

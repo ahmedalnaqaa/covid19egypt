@@ -1,0 +1,240 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }}
+    |
+    {{parent()}}
+{% endblock %}
+{% block header %}
+    <h2 class="display-8 pt-5">تحديث حالات فيروس كورونا (كوڤيد-19) بتاريخ {{ case.createdAt|date('d-m-Y') }}</h2>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        {% if lastCase.createdAt|date('Y-m-d') == case.createdAt|date('Y-m-d') %}
+            <div class="col-md-6">
+                <div class="card mb-4 box-shadow border-light">
+                    <div class="card-header text-bold text-center">
+                        <h5 class="text-danger"><strong>أخر تحديث بتاريخ {{ case.createdAt|date('d-m-Y') }}</strong></h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless text-center">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">الإصابات</th>
+                                <th scope="col">الشفاء</th>
+                                <th scope="col">الوفاة</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">اليوم</th>
+                                <td>{{ case.newDailyCases }}</td>
+                                <td>{{ case.newDailyRecovered }}</td>
+                                <td>{{ case.newDailyDeaths }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">الإجمالي</th>
+                                <td>{{ case.totalCases }}</td>
+                                <td>{{ case.totalRecovered }}</td>
+                                <td>{{ case.totalDeaths }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <a href="{{ path('cases') }}" class="btn btn-danger">إضغط هنا لتصفح جميع التحديثات</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4 border-light">
+                    <div id="piechart" class="chart row"></div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-6">
+                <div class="card-header text-bold text-center">
+                    <h5 class="text-danger"><strong>{{ case.createdAt|date('Y-m-d') }}</strong></h5>
+                </div>
+                <div class="card mb-2 border-light">
+                    <div id="piechart" class="chart row"></div>
+                </div>
+                <div class="card mb-2 box-shadow border-light">
+                    <div class="card-body">
+                        <table class="table table-borderless text-center">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">الإصابات</th>
+                                <th scope="col">الشفاء</th>
+                                <th scope="col">الوفاة</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">اليوم</th>
+                                <td>{{ case.newDailyCases }}</td>
+                                <td>{{ case.newDailyRecovered }}</td>
+                                <td>{{ case.newDailyDeaths }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">الإجمالي</th>
+                                <td>{{ case.totalCases }}</td>
+                                <td>{{ case.totalRecovered }}</td>
+                                <td>{{ case.totalDeaths }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card-header text-bold text-center">
+                    <h5 class="text-danger"><strong>اليوم</strong></h5>
+                </div>
+                <div class="card mb-2 border-light">
+                    <div id="piechart1" class="chart row"></div>
+                </div>
+                <div class="card mb-2 box-shadow border-light">
+                    <div class="card-body">
+                        <table class="table table-borderless text-center">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">الإصابات</th>
+                                <th scope="col">الشفاء</th>
+                                <th scope="col">الوفاة</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">اليوم</th>
+                                <td>{{ lastCase.newDailyCases }}</td>
+                                <td>{{ lastCase.newDailyRecovered }}</td>
+                                <td>{{ lastCase.newDailyDeaths }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">الإجمالي</th>
+                                <td>{{ lastCase.totalCases }}</td>
+                                <td>{{ lastCase.totalRecovered }}</td>
+                                <td>{{ lastCase.totalDeaths }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">هل تريد عمل إختبار لنفسك؟</h5>
+                    <button type="button" class="close float-left m-0 p-1" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>يساعد هذا الإختبار على تقييم وضعك الصحي تجاه الإصابة بفيرس كورونا (كوفيد-19)</p>
+                    <a target="_blank" class=" btn btn-warning text-white" href="{{path('corona-test')}}">إبدأ الإختبار</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block chart %}
+    <div id="linechart_material" class="chart row">
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawPieChart);
+
+        function drawPieChart() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['حالات الشفاء', {{ case.totalRecovered }}],
+                ['الوفيات',  {{ case.totalDeaths }}],
+                ['حالات مصابة نشطة', {{ case.totalCases - (case.totalRecovered + case.totalDeaths) }}],
+            ]);
+
+            var options = {
+                colors: ['green', 'red', 'orange']
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+            chart.draw(data, options);
+        }
+
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(drawLineChart);
+
+        function drawLineChart() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', '');
+            data.addColumn('number', 'حالات جديدة');
+            data.addColumn('number', 'حالات الشفاء');
+            data.addColumn('number', 'حالات الوفاة');
+
+            data.addRows([
+                {% for case in cases %}
+                {% set year = case.createdAt|date("Y") %}
+                {% set month = case.createdAt|date("m") - 1 %}
+                {% set day = case.createdAt|date("d") %}
+
+                [
+                    new Date({{ year}}, {{ month }}, {{ day }}),
+                    {{ case.newDailyCases }},
+                    {{ case.newDailyRecovered }},
+                    {{ case.newDailyDeaths }}
+                ]
+                {% if loop.index != cases|length %}, {% endif %}
+                {% endfor %}
+            ]);
+
+            var options = {
+                colors: ['blue', 'green', 'red']
+            };
+
+            var chart = new google.charts.Line(document.getElementById('linechart_material'));
+
+            chart.draw(data, google.charts.Line.convertOptions(options));
+        }
+
+        setTimeout(function(){
+            $("#exampleModal").modal('show');
+        }, 25000);
+
+    {% if lastCase.createdAt|date('Y-m-d') != case.createdAt|date('Y-m-d') %}
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawPieChartNow);
+
+            function drawPieChartNow() {
+
+                var data = google.visualization.arrayToDataTable([
+                    ['Task', 'Hours per Day'],
+                    ['حالات الشفاء', {{ lastCase.totalRecovered }}],
+                    ['الوفيات',  {{ lastCase.totalDeaths }}],
+                    ['حالات مصابة نشطة', {{ lastCase.totalCases - (lastCase.totalRecovered + lastCase.totalDeaths) }}],
+                ]);
+
+                var options = {
+                    colors: ['green', 'red', 'orange']
+                };
+
+                var chart = new google.visualization.PieChart(document.getElementById('piechart1'));
+
+                chart.draw(data, options);
+            }
+
+    {% endif %}
+    </script>
+{% endblock %}
