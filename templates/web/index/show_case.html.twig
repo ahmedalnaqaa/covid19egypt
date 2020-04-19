@@ -53,7 +53,18 @@
         {% else %}
             <div class="col-md-6">
                 <div class="card-header text-bold text-center">
-                    <h5 class="text-danger"><strong>{{ case.createdAt|date('Y-m-d') }}</strong></h5>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <strong class="text-danger">{{ case.createdAt|date('Y-m-d') }}</strong>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {% for caseObj in cases|slice(0,7) %}
+                                {% if caseObj.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') %}
+                                    <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': caseObj.createdAt|date('Y-m-d')}) }}">{{caseObj.createdAt|date('Y-m-d')}}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 <div class="card mb-2 border-light">
                     <div id="piechart" class="chart row"></div>

@@ -13,7 +13,18 @@
         <div class="col-md-6">
             <div class="card mb-4 box-shadow border-light">
                 <div class="card-header text-bold text-center">
-                    <h5 class="text-danger"><strong>أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong></h5>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <strong class="text-danger">أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            {% for case in cases|slice(0,7) %}
+                                {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') %}
+                                    <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <table class="table table-borderless text-center">
@@ -69,14 +80,6 @@
     </div>
 {% endblock %}
 {% block chart %}
-    <h4 class="text-right" style="direction: rtl">
-        <svg class="bi bi-bar-chart-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <rect width="4" height="5" x="1" y="10" rx="1"/>
-            <rect width="4" height="9" x="6" y="6" rx="1"/>
-            <rect width="4" height="14" x="11" y="1" rx="1"/>
-        </svg>
-        رسم تحليلي لمعدل زيادة الحالات الجديدة, حالات الشفاء, وحالات الوفاة
-    </h4>
     <div id="linechart_material" class="chart row">
     </div>
 {% endblock %}
@@ -144,6 +147,6 @@
 
         setTimeout(function(){
             $("#exampleModal").modal('show');
-            }, 20000);
+            }, 25000);
     </script>
 {% endblock %}
