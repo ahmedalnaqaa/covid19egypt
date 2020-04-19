@@ -19,7 +19,7 @@
 {% endblock %}
 {% block body %}
     <div class="table-responsive">
-        <table id="egStatus" class="table table-hover table-bordered">
+        <table id="egStatus" class="table table-hover table-bordered text-center">
             <thead class="thead-light">
             <tr>
                 <th scope="col">التاريخ</th>
@@ -31,12 +31,12 @@
             </thead>
             <tbody>
             {% for case in cases %}
-                <tr {% if lastCase.createdAt == case.createdAt %}class="table-warning"{% endif %}>
-                    <td>{{ case.createdAt|date("Y-m-d") }}</td>
-                    <td>{{ case.totalCases }}</td>
-                    <td>{{ case.newDailyCases }}</td>
-                    <td>{{ case.newDailyRecovered }}</td>
-                    <td>{{ case.newDailyDeaths }}</td>
+                <tr>
+                    <td class="table-active">{{ case.createdAt|date("Y-m-d") }}</td>
+                    <td class="table-primary">{{ case.totalCases }}</td>
+                    <td class="table-warning">{{ case.newDailyCases }}</td>
+                    <td class="table-success">{{ case.newDailyRecovered }}</td>
+                    <td class="table-danger">{{ case.newDailyDeaths }}</td>
                 </tr>
             {% endfor %}
             </tbody>
