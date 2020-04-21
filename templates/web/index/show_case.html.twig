@@ -1,12 +1,23 @@
 {% extends 'base.html.twig' %}
-
+{% block meta_tags %}
+    <meta name="description" content=" تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }} , حالات جديدة: {{ case.newDailyCases }} مجموع الحالات: {{ case.totalCases }}    حالات الوفاة: {{ case.newDailyDeaths }}">
+{% endblock %}
 {% block title %}
     تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }}
+    |
+    حالات جديدة: {{ case.newDailyCases }}
+    مجموع الحالات: {{ case.totalCases }}
+    حالات الوفاة: {{ case.newDailyDeaths }}
     |
     {{parent()}}
 {% endblock %}
 {% block header %}
     <h2 class="display-8 pt-5">تحديث حالات فيروس كورونا (كوڤيد-19) بتاريخ {{ case.createdAt|date('d-m-Y') }}</h2>
+    <p>
+        حالات جديدة: <strong class="text-primary">{{ case.newDailyCases }}</strong>,
+        حالات الشفاء: <strong class="text-success">{{ case.newDailyRecovered }}</strong>,
+        وفيات: <strong class="text-danger">{{ case.newDailyDeaths }}</strong>
+    </p>
 {% endblock %}
 {% block body %}
     <div class="row">
