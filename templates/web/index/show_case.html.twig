@@ -3,7 +3,12 @@
     <meta name="description" content=" تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }} , حالات جديدة: {{ case.newDailyCases }} مجموع الحالات: {{ case.totalCases }}    حالات الوفاة: {{ case.newDailyDeaths }}">
 {% endblock %}
 {% block title %}
-    تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }} | حالات جديدة: {{ case.newDailyCases }} مجموع الحالات: {{ case.totalCases }} حالات الوفاة: {{ case.newDailyDeaths }} |
+    {% if lastCase.createdAt|date('Y-m-d') == case.createdAt|date('Y-m-d') %}
+        تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }} | حالات جديدة: {{ case.newDailyCases }} مجموع الحالات: {{ case.totalCases }} حالات الوفاة: {{ case.newDailyDeaths }} |
+    {% else %}
+        مقارنة بين   تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }}  واليوم
+        | حالات جديدة: {{ case.newDailyCases }} مجموع الحالات: {{ case.totalCases }} حالات الوفاة: {{ case.newDailyDeaths }}
+    {% endif %}
     {{parent()}}
 {% endblock %}
 {% block header %}
