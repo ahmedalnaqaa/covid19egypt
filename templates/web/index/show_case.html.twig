@@ -13,11 +13,51 @@
 {% endblock %}
 {% block header %}
     <h2 class="display-8 pt-5">تحديث حالات فيروس كورونا (كوڤيد-19) بتاريخ {{ case.createdAt|date('d-m-Y') }}</h2>
-    <p>
-        حالات جديدة: <strong class="text-primary">{{ case.newDailyCases }}</strong>,
-        حالات الشفاء: <strong class="text-success">{{ case.newDailyRecovered }}</strong>,
-        وفيات: <strong class="text-danger">{{ case.newDailyDeaths }}</strong>
-    </p>
+
+    {% if lastCase.createdAt|date('Y-m-d') == case.createdAt|date('Y-m-d') %}
+        <p>
+            حالات جديدة: <strong class="text-primary">{{ case.newDailyCases }}</strong>,
+            حالات الشفاء: <strong class="text-success">{{ case.newDailyRecovered }}</strong>,
+            وفيات: <strong class="text-danger">{{ case.newDailyDeaths }}</strong>
+        </p>
+    {% else %}
+        {% set casesPercentage = (((lastCase.totalCases - case.totalCases) / case.totalCases)*100)|round %}
+        {% set recoveredPercentage = (((lastCase.totalRecovered - case.totalRecovered) / case.totalRecovered)*100)|round %}
+        {% set deathPercentage = (((lastCase.totalDeaths - case.totalDeaths) / case.totalDeaths)*100)|round %}
+        <p style="direction: rtl;">
+            نسبة الإصابات:
+             {% if casesPercentage <= 0  %}
+                 <strong class="text-success">
+                     <span class="text-bold" style="font-size: 22px;">&#8595;</span>{{ casesPercentage }}%
+                 </strong>
+             {% else %}
+                 <strong class="text-danger">
+                     <span class="text-bold" style="font-size: 22px;">&#8593;</span>{{ casesPercentage }}%
+                 </strong>
+             {% endif %},
+            نسبة الشفاء:
+            {% if recoveredPercentage >= 0  %}
+                <strong class="text-success">
+                    <span class="text-bold" style="font-size: 22px;">&#8593;</span>{{ recoveredPercentage }}%
+                </strong>
+            {% else %}
+                <strong class="text-danger">
+                    <span class="text-bold" style="font-size: 22px;">&#8595;</span>{{ recoveredPercentage }}%
+                </strong>
+            {% endif %},
+            نسبة الوفيات:
+            {% if deathPercentage <= 0  %}
+                <strong class="text-success">
+                    <span class="text-bold" style="font-size: 22px;">&#8595;</span>{{ deathPercentage }}%
+                </strong>
+            {% else %}
+                <strong class="text-danger">
+                    <span class="text-bold" style="font-size: 22px;">&#8593;</span>{{ deathPercentage }}%
+                </strong>
+            {% endif %}
+        </p>
+    {% endif %}
+
 {% endblock %}
 {% block body %}
     <div class="row">
