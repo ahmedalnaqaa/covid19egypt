@@ -27,31 +27,33 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="table table-borderless text-center">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">الإصابات</th>
-                            <th scope="col">الشفاء</th>
-                            <th scope="col">الوفاة</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th scope="row">اليوم</th>
-                            <td>{{ lastCase.newDailyCases }}</td>
-                            <td>{{ lastCase.newDailyRecovered }}</td>
-                            <td>{{ lastCase.newDailyDeaths }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">الإجمالي</th>
-                            <td>{{ lastCase.totalCases }}</td>
-                            <td>{{ lastCase.totalRecovered }}</td>
-                            <td>{{ lastCase.totalDeaths }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <a href="{{ path('cases') }}" class="btn btn-danger">إضغط هنا لتصفح جميع التحديثات</a>
+                    <div class="table-responsive">
+                        <table class="table table-borderless text-center">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">الإصابات</th>
+                                <th scope="col">الشفاء</th>
+                                <th scope="col">الوفاة</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">اليوم</th>
+                                <td>{{ lastCase.newDailyCases }}</td>
+                                <td>{{ lastCase.newDailyRecovered }}</td>
+                                <td>{{ lastCase.newDailyDeaths }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">الإجمالي</th>
+                                <td>{{ lastCase.totalCases }}</td>
+                                <td>{{ lastCase.totalRecovered }}</td>
+                                <td>{{ lastCase.totalDeaths }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <a href="{{ path('cases') }}" class="btn btn-danger">إضغط هنا لتصفح جميع التحديثات</a>
+                    </div>
                 </div>
             </div>
         </div>

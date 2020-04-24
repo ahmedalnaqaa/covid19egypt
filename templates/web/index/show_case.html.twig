@@ -3,12 +3,7 @@
     <meta name="description" content=" تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }} , حالات جديدة: {{ case.newDailyCases }} مجموع الحالات: {{ case.totalCases }}    حالات الوفاة: {{ case.newDailyDeaths }}">
 {% endblock %}
 {% block title %}
-    تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }}
-    |
-    حالات جديدة: {{ case.newDailyCases }}
-    مجموع الحالات: {{ case.totalCases }}
-    حالات الوفاة: {{ case.newDailyDeaths }}
-    |
+    تحديث الحالات بتاريخ {{ case.createdAt|date('d-m-Y') }} | حالات جديدة: {{ case.newDailyCases }} مجموع الحالات: {{ case.totalCases }} حالات الوفاة: {{ case.newDailyDeaths }} |
     {{parent()}}
 {% endblock %}
 {% block header %}
@@ -25,9 +20,19 @@
             <div class="col-md-6">
                 <div class="card mb-4 box-shadow border-light">
                     <div class="card-header text-bold text-center">
-                        <h5 class="text-danger"><strong>أخر تحديث بتاريخ {{ case.createdAt|date('d-m-Y') }}</strong></h5>
-                    </div>
-                    <div class="card-body">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <strong class="text-danger">أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% for case in cases|slice(0,7) %}
+                                    {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') %}
+                                        <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>                    </div>
+                    <div class="card-body table-responsive">
                         <table class="table table-borderless text-center">
                             <thead>
                             <tr>
@@ -81,7 +86,7 @@
                     <div id="piechart" class="chart row"></div>
                 </div>
                 <div class="card mb-2 box-shadow border-light">
-                    <div class="card-body">
+                    <div class="card-body table-responsive">
                         <table class="table table-borderless text-center">
                             <thead>
                             <tr>
@@ -117,7 +122,7 @@
                     <div id="piechart1" class="chart row"></div>
                 </div>
                 <div class="card mb-2 box-shadow border-light">
-                    <div class="card-body">
+                    <div class="card-body table-responsive">
                         <table class="table table-borderless text-center">
                             <thead>
                             <tr>
@@ -146,6 +151,9 @@
                 </div>
             </div>
         {% endif %}
+        <div class="col-md-12 text-center mb-4">
+            <div class="sharethis-inline-share-buttons"></div>
+        </div>
     </div>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
