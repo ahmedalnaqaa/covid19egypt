@@ -23,20 +23,24 @@
             <thead class="thead-light">
             <tr>
                 <th scope="col">التاريخ</th>
-                <th scope="col">إجمالي المصابين</th>
                 <th scope="col">حالات جديدة</th>
-                <th scope="col">حالات الشفاء</th>
+                <th scope="col">شفاء</th>
                 <th scope="col">وفيات</th>
+                <th scope="col">إجمالي المصابين</th>
+                <th scope="col">إجمالي الشفاء</th>
+                <th scope="col">إجمالي الوفيات</th>
             </tr>
             </thead>
             <tbody>
             {% for case in cases %}
                 <tr>
                     <td class="table-active"><a href="{{ path('show_case', {'date': case.createdAt|date("Y-m-d")}) }}">{{ case.createdAt|date("Y-m-d") }}</a></td>
-                    <td class="table-primary">{{ case.totalCases }}</td>
                     <td class="table-warning">{{ case.newDailyCases }}</td>
                     <td class="table-success">{{ case.newDailyRecovered }}</td>
                     <td class="table-danger">{{ case.newDailyDeaths }}</td>
+                    <td class="table-primary">{{ case.totalCases }}</td>
+                    <td class="table-success">{{ case.totalRecovered }}</td>
+                    <td class="table-danger">{{ case.totalDeaths }}</td>
                 </tr>
             {% endfor %}
             </tbody>
