@@ -18,8 +18,8 @@
                             <strong class="text-danger">أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for case in cases|slice(0,7) %}
-                                {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') %}
+                            {% for case in cases|slice(0,30) %}
+                                {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == "now"|date('m') %}
                                     <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
                                 {% endif %}
                             {% endfor %}
@@ -52,7 +52,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <a href="{{ path('cases') }}" class="btn btn-danger">إضغط هنا لتصفح جميع التحديثات</a>
+                        <a href="{{ path('cases') }}" class="btn btn-danger">إضغط هنا لتصفح جميع الحالات</a>
                     </div>
                 </div>
             </div>

@@ -70,8 +70,8 @@
                                 <strong class="text-danger">أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                {% for case in cases|slice(0,7) %}
-                                    {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') %}
+                                {% for case in cases|slice(0,30) %}
+                                    {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == "now"|date('m') %}
                                         <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
                                     {% endif %}
                                 {% endfor %}
@@ -119,9 +119,9 @@
                             <strong class="text-danger">{{ case.createdAt|date('Y-m-d') }}</strong>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            {% for caseObj in cases|slice(0,7) %}
-                                {% if caseObj.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') %}
-                                    <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': caseObj.createdAt|date('Y-m-d')}) }}">{{caseObj.createdAt|date('Y-m-d')}}</a>
+                            {% for case in cases|slice(0,30) %}
+                                {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == "now"|date('m') %}
+                                    <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
                                 {% endif %}
                             {% endfor %}
                         </div>
