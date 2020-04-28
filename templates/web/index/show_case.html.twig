@@ -69,14 +69,15 @@
                             <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <strong class="text-danger">أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 33333;">
                                 {% for case in cases|slice(0,30) %}
                                     {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == "now"|date('m') %}
                                         <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
                                     {% endif %}
                                 {% endfor %}
                             </div>
-                        </div>                    </div>
+                        </div>
+                    </div>
                     <div class="card-body table-responsive">
                         <table class="table table-borderless text-center">
                             <thead>
@@ -118,7 +119,7 @@
                         <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <strong class="text-danger">{{ case.createdAt|date('Y-m-d') }}</strong>
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 33333;">
                             {% for case in cases|slice(0,30) %}
                                 {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == "now"|date('m') %}
                                     <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
