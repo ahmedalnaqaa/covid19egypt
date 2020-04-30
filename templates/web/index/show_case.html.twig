@@ -21,9 +21,9 @@
             وفيات: <strong class="text-danger">{{ case.newDailyDeaths }}</strong>
         </p>
     {% else %}
-        {% set casesPercentage = (((lastCase.totalCases - case.totalCases) / case.totalCases)*100)|round %}
-        {% set recoveredPercentage = (((lastCase.totalRecovered - case.totalRecovered) / case.totalRecovered)*100)|round %}
-        {% set deathPercentage = (((lastCase.totalDeaths - case.totalDeaths) / case.totalDeaths)*100)|round %}
+        {% set casesPercentage = (((lastCase.totalCases - case.totalCases) / (case.totalCases!=0 ? case.totalCases : 1) )*100)|round %}
+        {% set recoveredPercentage = (((lastCase.totalRecovered - case.totalRecovered) / (case.totalRecovered!=0 ? case.totalRecovered : 1))*100)|round %}
+        {% set deathPercentage = (((lastCase.totalDeaths - case.totalDeaths) / (case.totalDeaths!=0 ? case.totalDeaths : 1))*100)|round %}
         <p style="direction: rtl;">
             نسبة الإصابات:
              {% if casesPercentage <= 0  %}
@@ -65,15 +65,26 @@
             <div class="col-md-6">
                 <div class="card mb-4 box-shadow border-light">
                     <div class="card-header text-bold text-center">
-                        <div class="dropdown">
-                            <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <strong class="text-danger">أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 33333;">
-                                {% for case in cases|slice(0,30) %}
-                                    {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == "now"|date('m') %}
-                                        <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
-                                    {% endif %}
+                        <a class="list-unstyled text-danger
+                     dropdown-toggle" data-toggle="collapse" href="#collapseExample"
+                           aria-expanded="false" aria-controls="collapseExample" style="text-underline: none;">
+                            <strong class="text-danger show-dates">أخر تحديث
+                                بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
+                        </a>
+                        <div class="collapse" id="collapseExample">
+                            <div class="card card-body">
+                                {% for i in "now"|date("m").."2019-02-15"|date("m") %}
+                                    <p class="text-bold text-center"> شهر {{ i }} </p>
+                                    <div class="row text-right">
+                                        {% for case in cases %}
+                                            {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == i %}
+                                                <div class="col-xs-3">
+                                                    <a class="text-bold dropdown-item text-danger"
+                                                       href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{ case.createdAt|date('d') }}</a>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
                                 {% endfor %}
                             </div>
                         </div>
@@ -115,15 +126,25 @@
         {% else %}
             <div class="col-md-6">
                 <div class="card-header text-bold text-center">
-                    <div class="dropdown">
-                        <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <strong class="text-danger">{{ case.createdAt|date('Y-m-d') }}</strong>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 33333;">
-                            {% for case in cases|slice(0,30) %}
-                                {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == "now"|date('m') %}
-                                    <a class="text-bold dropdown-item text-danger" href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{case.createdAt|date('Y-m-d')}}</a>
-                                {% endif %}
+                    <a class="list-unstyled text-danger
+                     dropdown-toggle" data-toggle="collapse" href="#collapseExample"
+                       aria-expanded="false" aria-controls="collapseExample" style="text-underline: none;">
+                        <strong class="text-danger show-dates">{{ case.createdAt|date('d-m-Y') }}</strong>
+                    </a>
+                    <div class="collapse" id="collapseExample">
+                        <div class="card card-body">
+                            {% for i in case.createdAt|date("m").."2019-02-15"|date("m") %}
+                                <p class="text-bold text-center"> شهر {{ i }} </p>
+                                <div class="row text-right">
+                                    {% for case in cases %}
+                                        {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == i %}
+                                            <div class="col-xs-3">
+                                                <a class="text-bold dropdown-item text-danger"
+                                                   href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{ case.createdAt|date('d') }}</a>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             {% endfor %}
                         </div>
                     </div>
@@ -261,7 +282,7 @@
             data.addColumn('number', 'حالات الوفاة');
 
             data.addRows([
-                {% for case in cases %}
+                {% for case in cases|slice(0,50) %}
                 {% set year = case.createdAt|date("Y") %}
                 {% set month = case.createdAt|date("m") - 1 %}
                 {% set day = case.createdAt|date("d") %}

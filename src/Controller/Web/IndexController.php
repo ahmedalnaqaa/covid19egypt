@@ -24,7 +24,7 @@ class IndexController extends AbstractController
         $dql   = "SELECT c FROM App\Entity\Cases c ORDER BY c.createdAt DESC";
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
-        $cases = $em->createQuery($dql)->setMaxResults(45)->getArrayResult();
+        $cases = $em->createQuery($dql)->getArrayResult();
         $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
 
         return [
@@ -82,7 +82,7 @@ class IndexController extends AbstractController
         }
         $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
         $dql   = "SELECT c FROM App\Entity\Cases c WHERE  c.createdAt <= ?1 ORDER BY c.createdAt DESC";
-        $cases = $em->createQuery($dql)->setParameter(1, new \DateTime($date))->setMaxResults(45)->getArrayResult();
+        $cases = $em->createQuery($dql)->setParameter(1, new \DateTime($date))->getArrayResult();
 
         return [
             'case' => $case,
