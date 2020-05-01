@@ -72,10 +72,40 @@
     {% else %}
         {{ form_start(form) }}
         {{ form_widget(form) }}
-
+        <div id="sub-location"></div>
         <div>
             <input type="submit" class="btn btn-primary" value="عرض النتيجة"/>
         </div>
         {{ form_end(form) }}
     {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            $("#location").change(function(){
+                var selectedCountry = $(this).children("option:selected").val();
+                $.ajax({
+                    url: "/get-parent-locations/"+selectedCountry+"",
+                    type: 'GET',
+                    dataType: 'json', // added data type
+                    success: function(res) {
+                        $(this).attr('name', 'parentLocation');
+                        let subLocation = "<div class='form-group'>";
+                        subLocation += "<label class='col-sm-12 col-sm-2 control-label required' for='location'>إختر المدينة أو المنطقة</label>";
+                        subLocation += "<div class='col-sm-10'>";
+                        subLocation += "<select name='location' class='form-control' required>";
+                        for (let i = 0; i < res.length; i++) {
+                            subLocation += "<option value='"+res[i].id+"'>"+res[i].title+"</option>";
+                        }
+                        subLocation += "</select>";
+                        subLocation += "</div>";
+                        subLocation += "</div>";
+
+                       $("#sub-location").html(subLocation);
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

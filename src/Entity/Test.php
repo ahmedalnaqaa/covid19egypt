@@ -36,6 +36,12 @@ class Test
     private $createdAt;
 
     /**
+     * @ORM\ManyToOne(targetEntity="\App\Entity\Location", inversedBy="tests")
+     * @ORM\JoinColumn(name="location_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     */
+    protected $location;
+
+    /**
      * @ORM\ManyToOne(targetEntity="\App\Entity\User", inversedBy="tests")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      */
@@ -128,6 +134,30 @@ class Test
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set location
+     *
+     * @param Location $location
+     *
+     * @return Test
+     */
+    public function setLocation(Location $location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * Get location
+     *
+     * @return Location
+     */
+    public function getLocation()
+    {
+        return $this->location;
     }
 
     /**

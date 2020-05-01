@@ -4,6 +4,7 @@
 namespace App\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use KunicMarko\SonataAnnotationBundle\Annotation as Sonata;
@@ -45,12 +46,22 @@ class Location
     protected $parent = null;
 
     /**
+     * @ORM\OneToMany(targetEntity="\App\Entity\Test", mappedBy="location", fetch="LAZY")
+     */
+    protected $tests;
+
+    /**
      * @var DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      * @Sonata\ListField()
      */
     private $createdAt;
+
+    public function __construct()
+    {
+        $this->tests = new ArrayCollection();
+    }
 
     /**
      * @ORM\PrePersist
@@ -132,6 +143,16 @@ class Location
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * Get tests
+     *
+     * @return ArrayCollection
+     */
+    public function getTests()
+    {
+        return $this->tests;
     }
 
     public function __toString()
