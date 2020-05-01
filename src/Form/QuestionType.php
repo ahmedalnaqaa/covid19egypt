@@ -217,6 +217,7 @@ class QuestionType extends AbstractType
                     return $er->createQueryBuilder('l')
                         ->where('l.parent is NULL');
                 },
+                'placeholder' => 'إختر محافظتك',
                 'label' => 'إختر المحافظة',
                 'label_attr' => ['class' => 'col-sm-12']
             ])
