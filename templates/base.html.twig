@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
         <meta name="keywords" content="corona, corona egypt, covid-19,  فيرس كورونا ,كورونا, كورونا مصر, كوڤيد-19, اختبار كورونا, أخر مستجدات فيروس كورونا, الأعراض والإحصائيات‎">
         {% block meta_tags %}
             <meta name="description" content=" تعرف على تحديث الحالات اليومي لفيرس كورونا(كوڤيد-19) و التحديثات السابقة وقم بعمل إختبار إصابة لنفسك">
@@ -116,7 +117,11 @@
                 </ul>
             </div>
             <div class="navbar-header">
-                <h1 title="كوڤيد-19 مصر لتحديثات الإصابة اليومية بفيروس كورونا المستجد , عمل إختبار إصابة بفيروس كورونا" class="app-title navbar-brand font-weight-normal"><a href="{{path('index')}}"><span class="badge badge-danger">كوڤيد-19 مصر</span></a></h1>
+                <h1 title="كوڤيد-19 مصر لتحديثات الإصابة اليومية بفيروس كورونا المستجد , عمل إختبار إصابة بفيروس كورونا" class="app-title navbar-brand font-weight-normal">
+                    <a href="{{path('index')}}">
+                        <img src="{{ asset('images/logo.png') }}" title="كوڤيد-19 مصر" alt="كوڤيد-19 مصر" class="img-responsive">
+                    </a>
+                </h1>
 
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
