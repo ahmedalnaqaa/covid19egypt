@@ -1,0 +1,97 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    الحالات المعزولة
+    |
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-5">الحالات المعزولة</h1>
+    <p></p>
+{% endblock %}
+
+{% block body %}
+    {% if users is not empty %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">الإسم</th>
+                    <th scope="col">معزول منذ</th>
+                    <th scope="col">بداية ظهور الأعراض</th>
+                    <th scope="col">بداية العزل</th>
+                    <th scope="col">نهاية العزل</th>
+                    <th scope="col">تاريخ أخر فحص</th>
+                    <th scope="col">الحالة</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    {% set isolationStartedAt = user.isolationStartedAt|date('d-m-Y') %}
+                    {% set today = "now"|date('d-m-Y') %}
+                    {% set difference = date(today).diff(date(isolationStartedAt))%}
+                    {% set leftDays = difference.days %}
+                    {% if isolationStartedAt == today %}
+                        {% set leftDays = 'يوم واحد' %}
+                    {% elseif leftDays > 9 %}
+                        {% set leftDays = leftDays~ ' يوم' %}
+                    {% elseif leftDays == 2 %}
+                        {% set leftDays = 'يومان' %}
+                    {% else %}
+                        {% set leftDays = leftDays~ ' أيام' %}
+                    {% endif %}
+
+                    {% set symptomsStartedAt = user.symptomsStartedAt|date('d-m-Y') %}
+                    {% set symptomsDateDifference = date(today).diff(date(symptomsStartedAt))%}
+                    {% set symptomsDays = symptomsDateDifference.days %}
+                    {% if symptomsStartedAt == today %}
+                        {% set symptomsDays = 'يوم واحد' %}
+                    {% elseif symptomsDays > 9 %}
+                        {% set symptomsDays = symptomsDays~ ' يوم' %}
+                    {% elseif symptomsDays == 2 %}
+                        {% set symptomsDays = 'يومان' %}
+                    {% else %}
+                        {% set symptomsDays = symptomsDays~ ' أيام' %}
+                    {% endif %}
+
+                    <tr>
+                        <th scope="row"><a href="{{ path('user-case-profile', {'id': user.id}) }}" target="_blank">{{ user.fullName }}</a></th>
+                        <td>{{ user.isolationStartedAt|date('m/d') }}
+                            <span class="badge badge-primary">{{ leftDays }}</span>
+                        </td>
+                        <td>{{ user.symptomsStartedAt|date('m/d') }}
+                            <span class="badge badge-primary">{{ symptomsDays }}</span>
+                        </td>
+                        <td>{{ user.isolationStartedAt|date('m/d') }}</td>
+                        <td>{{ user.isolationEndAt|date('m/d') }}</td>
+                        <td>
+                            {% if user.isolations is not empty %}
+                                {{ (user.isolations|last).createdAt|date('m/d') }}
+                            {% else %}
+                                لا يوجد
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.isolations is not empty %}
+                                {% if (user.isolations|last).doctorComment is empty %}
+                                    <span class="badge badge-danger">يحتاج مراجعة</span>
+                                {% else %}
+                                    <span class="badge badge-success">تم مراجعته</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge badge-primary">لم يحدث حالته حتى الأن</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <hr/>
+        <p class="text-primary text-center"> لا يوجد لديك حالات حتى الأن, قم بإعادة المحاولة بعد قليل</p>
+    {% endif %}
+{% endblock %}

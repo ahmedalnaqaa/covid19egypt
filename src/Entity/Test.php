@@ -65,6 +65,16 @@ class Test
     }
 
     /**
+     * Get id
+     *
+     * @return Test
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Set data
      *
      * @param $data

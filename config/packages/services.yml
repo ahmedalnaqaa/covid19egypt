@@ -1,0 +1,17 @@
+# src/Acme/UserBundle/Resources/config/services.yml
+services:
+  app_user.registration_completed:
+    class: App\EventListener\RegisterationSuccessListener
+    arguments: ['@router', "@doctrine.orm.entity_manager"]
+    tags:
+      - { name: kernel.event_subscriber }
+
+  app_user.registration_confirmed:
+    class: App\EventListener\RegisterationConfirmedListener
+    arguments: ['@router']
+    tags:
+      - { name: kernel.event_subscriber }
+
+  app_user.login_success_handler:
+    class:  App\Handler\LoginSuccessHandler
+    arguments:  ['@router', '@security.helper']

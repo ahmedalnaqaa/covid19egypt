@@ -4,8 +4,10 @@ security:
         FOS\UserBundle\Model\UserInterface: bcrypt
 
     role_hierarchy:
+        ROLE_DOCTOR: [ROLE_USER]
+        ROLE_USER: []
         ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_DOCTOR]
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -21,9 +23,15 @@ security:
             form_login:
                 provider: fos_userbundle
                 csrf_token_generator: security.csrf.token_manager
+                success_handler: app_user.login_success_handler
 
             logout:       true
             anonymous:    true
+            remember_me:
+                secret:      '%env(APP_SECRET)%'
+                lifetime: 31536000 # 365 days in seconds
+                path:     /
+                domain:   ~ # Defaults to the current domain from $_SERVER
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

@@ -7,5 +7,7 @@ fos_user:
   firewall_name: main
   user_class: App\Entity\User
   from_email:
-    address: "test@domain.com"
-    sender_name: "test@domain.com"
+    address: "covid19egypt.org@gmail.com"
+    sender_name: "Covid-19 Egypt"
+#  service:
+#    mailer: fos_user.mailer.twig_swift

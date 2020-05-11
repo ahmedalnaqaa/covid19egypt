@@ -1,0 +1,151 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    جدول عزلي المنزلي
+    |
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-5">جدول عزلي المنزلي</h1>
+    <p>
+        <a href="{{ path('isolate-yourself') }}" target="_blank">
+            إقرأ إرشادات العزل
+        </a>
+    </p>
+{% endblock %}
+
+{% block body %}
+    <div class="table-responsive">
+        <table class="table table-hover text-center">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">التاريخ</th>
+                <th scope="col">درجة الحرارة</th>
+                <th scope="col">ألم في الجسم</th>
+                <th scope="col">إسهال</th>
+                <th scope="col">صداع</th>
+                <th scope="col">فقدان التذوق</th>
+                <th scope="col">سعال</th>
+                <th scope="col">ألم في الحلق</th>
+                <th scope="col">رشح الأنف</th>
+                <th scope="col">ضيق تنفس</th>
+                <th scope="col">ضغط الدم</th>
+                <th scope="col">تقييم الطبيب</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for isolation in isolations %}
+                <tr>
+                    <td class="table-success">
+                        <svg class="bi bi-check" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </td>
+                    <td class="table-active">{{ isolation.createdAt|date('m/d') }}</td>
+                    <td class="{{ isolation.temperature > 37 ? 'table-danger' : 'table-success'}}"> {{ isolation.temperature }} </td>
+                    <td class="{{ isolation.bodyAche ? 'table-success' : 'table-danger'}}"> {{ isolation.bodyAche ? 'نعم' : 'لا'}} </td>
+                    <td class="{{ isolation.diarrhea ? 'table-success' : 'table-danger'}}"> {{ isolation.diarrhea ? 'نعم' : 'لا'}} </td>
+                    <td class="{{ isolation.headache ? 'table-success' : 'table-danger'}}"> {{ isolation.headache ? 'نعم' : 'لا'}} </td>
+                    <td class="{{ isolation.loseOfTaste ? 'table-success' : 'table-danger'}}"> {{ isolation.loseOfTaste ? 'Yes' : 'لا'}} </td>
+                    <td class="{{ isolation.cough ? 'table-success' : 'table-danger'}}"> {{ isolation.cough ? 'نعم' : 'لا'}} </td>
+                    <td class="{{ isolation.soreThroat ? 'table-success' : 'table-danger'}}"> {{ isolation.soreThroat ? 'نعم' : 'لا'}} </td>
+                    <td class="{{ isolation.runnyNose ? 'table-success' : 'table-danger'}}"> {{ isolation.runnyNose ? 'نعم' : 'لا'}} </td>
+                    <td class="{{ isolation.dyspnea ? 'table-success' : 'table-danger'}}"> {{ isolation.dyspnea ? 'نعم' : 'لا'}} </td>
+                    <td class="table-info">{{isolation.bloodPressure ? isolation.bloodPressure : '-'}} </td>
+                    <td class="table-active">
+                        {% if isolation.doctorComment is empty %}
+                            قيد الإنتظار
+                        {% else %}
+                        <a href="#" class="text-primary" data-toggle="modal" data-target="#doctorFeedbackModal-{{ loop.index }}">
+                        إضغط للمشاهدة
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            {% set lastIsolation = isolations|last ? (isolations|last).createdAt|date('Y-m-d') : app.user.isolationStartedAt|date_modify("-1 day")|date("Y-m-d") %}
+            {% set difference = date(app.user.isolationEndAt).diff(date(app.user.isolationStartedAt)) %}
+            {% set isolationDays = difference.days %}
+            {% set remainingDays = isolationDays - isolations|length %}
+            {% if isolations|length != isolationDays %}
+                {% for isolationRow in 1..(isolationDays - isolations|length )%}
+                    <tr>
+                        <td>
+                            {% if "now"|date("Y-m-d") >= lastIsolation|date_modify("+"~loop.index~" day")|date("Y-m-d") %}
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#isolationModal-{{ loop.index }}">
+                                    إبدأ الإختبار
+                                </button>
+                            {% else %}
+                                #
+                            {% endif %}
+                        </td>
+                        <td class="table-active">{{ lastIsolation|date_modify("+"~loop.index~" day")|date("m/d") }}</td>
+                        <th>-</th>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+    {% for isolationRow in 1..(14 - isolations|length )%}
+        {% if "now"|date("Y-m-d") >= lastIsolation|date_modify("+"~loop.index~" day")|date("Y-m-d") %}
+            <div class="modal fade" id="isolationModal-{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title float-right mt-3" id="exampleModalLabel">تحديث حالتي بتاريخ {{ lastIsolation|date_modify("+"~loop.index~" day")|date("m/d") }}</h5>
+                            <button type="button" class="close float-left m-0" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {{ render(controller(
+                                'App\\Controller\\Web\\UserController::isolationForm',
+                                { 'date': lastIsolation|date_modify("+"~loop.index~" day")|date("Y-m-d") }
+                            )) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% for isolation in app.user.isolations%}
+        <div class="modal fade" id="doctorFeedbackModal-{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title float-right mt-3" id="exampleModalLabel">مراجعة تاريخ {{ isolation.createdAt|date('Y-m-d') }}</h5>
+                        <button type="button" class="close float-left m-0" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="text-bold">تعليقك: </label>
+                        <blockquote class="blockquote">
+                            <p class="text-justify">{{ isolation.describeYourCase }}</p>
+                        </blockquote>
+                        <hr/>
+                        <label class="text-bold">تعليق الطبيب: </label>
+                        <blockquote class="blockquote">
+                            <p>{{ isolation.doctorComment }}</p>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

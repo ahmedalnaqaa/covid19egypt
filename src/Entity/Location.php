@@ -51,6 +51,11 @@ class Location
     protected $tests;
 
     /**
+     * @ORM\OneToMany(targetEntity="\App\Entity\User", mappedBy="location", fetch="LAZY")
+     */
+    protected $users;
+
+    /**
      * @var DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)

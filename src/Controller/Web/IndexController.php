@@ -113,6 +113,18 @@ class IndexController extends AbstractController
         ];
     }
 
+    /**
+     * @Route("/isolate-yourself", name="isolate-yourself", methods={"GET"})
+     * @Template()
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function isolationInfo(Request $request)
+    {
+        return [];
+    }
+
     private function getRequest($url) {
         $cURLConnection = curl_init();
 

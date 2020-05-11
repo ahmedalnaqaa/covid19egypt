@@ -1,0 +1,22 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    إختباراتي
+    |
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}
+    <h1 class="display-5">أكمل حسابك</h1>
+{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+        <div>
+            <input type="submit" class="btn btn-primary" value="تأكيد"/>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

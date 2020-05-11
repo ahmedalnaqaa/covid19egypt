@@ -6,11 +6,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 /**
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Table(name="users")
  */
 class User extends BaseUser
@@ -31,12 +32,45 @@ class User extends BaseUser
     protected $fullName;
 
     /**
+     * @var string
+     *
+     * @Assert\Regex(
+     *     pattern="/^[0-9\-\(\)\/\+\s]*$/",
+     *     match=true,
+     *     message="رقم هاتف غير صحيح"
+     * )
+     * @ORM\Column(name="phone_number", type="string", length=30, nullable=true)
+     */
+    protected $phoneNumber;
+
+    /**
      * @var
      *
      * @Assert\NotBlank()
      * @ORM\Column(name="birth_date", type="date", nullable=true)
      */
     private $birthDate;
+
+    /**
+     * @var
+     *
+     * @ORM\Column(name="symptoms_started_at", type="date", nullable=true)
+     */
+    private $symptomsStartedAt;
+
+    /**
+     * @var
+     *
+     * @ORM\Column(name="isolation_started_at", type="date", nullable=true)
+     */
+    private $isolationStartedAt;
+
+    /**
+     * @var
+     *
+     * @ORM\Column(name="isolation_end_at", type="date", nullable=true)
+     */
+    private $isolationEndAt;
 
     /**
      * @var bool
@@ -64,38 +98,54 @@ class User extends BaseUser
      */
     protected $tests;
 
-//    /**
-//     * @var bool
-//     *
-//     * @ORM\Column(name="take_asteroids", type="boolean")
-//     */
-//    protected $takeAsteroids = false;
-//
-//    /**
-//     * @var bool
-//     *
-//     * @ORM\Column(name="take_immunosuppressants", type="boolean")
-//     */
-//    protected $takeImmunosuppressants = false;
-//
-//    /**
-//     * @var bool
-//     *
-//     * @ORM\Column(name="is_smoking", type="boolean")
-//     */
-//    protected $isSmoking = false;
-//
-//    /**
-//     * @var int
-//     *
-//     * @ORM\Column(name="work_area", type="smallint", options={"default" = 0})
-//     */
-//    private $workArea = 0;
+    /**
+     * @ORM\OneToMany(targetEntity="\App\Entity\Isolation", mappedBy="user", fetch="LAZY")
+     */
+    protected $isolations;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="\App\Entity\Location", inversedBy="users")
+     * @ORM\JoinColumn(name="location_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     */
+    protected $location;
+
+    /**
+     * Creates a parent / child relationship on this entity.
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User",inversedBy="id")
+     * @ORM\JoinColumn(name="assigned_doctor", referencedColumnName="id", nullable=true)
+     */
+    protected $assignedDoctor = null;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="assignedDoctor")
+     * @ORM\OrderBy({"createdAt" = "DESC"})
+     */
+    protected $children;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=true)
+     */
+    private $createdAt;
 
     public function __construct()
     {
         parent::__construct();
         $this->tests = new ArrayCollection();
+        $this->isolations = new ArrayCollection();
+        $this->children = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function onPrePersist()
+    {
+        if (!$this->getCreatedAt()) {
+            $this->setCreatedAt(new \DateTime());
+        }
     }
 
     /**
@@ -131,6 +181,22 @@ class User extends BaseUser
         $this->birthDate = $birthDate;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
+    }
+
+    /**
+     * @param string $phoneNumber
+     */
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
     }
 
     /**
@@ -196,121 +262,149 @@ class User extends BaseUser
     {
         return $this->tests;
     }
-//
-//    /**
-//     * Set gender.
-//     *
-//     * @param bool $gender
-//     *
-//     * @return User
-//     */
-//    public function setGender($gender)
-//    {
-//        $this->gender = $gender;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Get gender.
-//     *
-//     * @return int
-//     */
-//    public function getGender()
-//    {
-//        return $this->gender;
-//    }
-//
-//    /**
-//     * Set takeAsteroids
-//     *
-//     * @param $takeAsteroids
-//     * @return $this
-//     */
-//    public function setIsTakeAsteroids($takeAsteroids)
-//    {
-//        $this->isFamilyChronic = $takeAsteroids;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Is taking asteroids?
-//     *
-//     * @return bool
-//     */
-//    public function hasTakeAsteroids()
-//    {
-//        return $this->takeAsteroids;
-//    }
-//
-//    /**
-//     * Set takeImmunosuppressants
-//     *
-//     * @param $takeImmunosuppressants
-//     * @return $this
-//     */
-//    public function setHasTakeImmunosuppressants($takeImmunosuppressants)
-//    {
-//        $this->takeImmunosuppressants = $takeImmunosuppressants;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Is taking Immunosuppressants?
-//     *
-//     * @return bool
-//     */
-//    public function hasTakeImmunosuppressants()
-//    {
-//        return $this->takeImmunosuppressants;
-//    }
-//
-//    /**
-//     * Set isSmoking
-//     *
-//     * @param $isSmoking
-//     * @return this
-//     */
-//    public function setIsSmoking($isSmoking)
-//    {
-//        $this->isSmoking = $isSmoking;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Is smoking?
-//     *
-//     * @return bool
-//     */
-//    public function isSmoking()
-//    {
-//        return $this->isSmoking;
-//    }
-//
-//    /**
-//     * Set work area.
-//     *
-//     * @param string $workArea
-//     *
-//     * @return User
-//     */
-//    public function setWorkArea($workArea)
-//    {
-//        $this->workArea = $workArea;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Get work area.
-//     *
-//     * @return string
-//     */
-//    public function getWorkArea()
-//    {
-//        return $this->workArea;
-//    }
+
+    /**
+     * Get isolations
+     *
+     * @return ArrayCollection
+     */
+    public function getIsolations()
+    {
+        return $this->isolations;
+    }
+
+    /**
+     * Set symptomsStartedAt
+     *
+     * @param /Date $symptomsStartedAt
+     *
+     * @return User
+     */
+    public function setSymptomsStartedAt($symptomsStartedAt)
+    {
+        $this->symptomsStartedAt = $symptomsStartedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get symptomsStartedAt
+     *
+     * @return  /DateTime
+     */
+    public function getSymptomsStartedAt()
+    {
+        return $this->symptomsStartedAt;
+    }
+
+    /**
+     * Set isolationStartedAt
+     *
+     * @param /Date $isolationStartedAt
+     *
+     * @return User
+     */
+    public function setIsolationStartedAt($isolationStartedAt)
+    {
+        $this->isolationStartedAt = $isolationStartedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get isolationStartedAt
+     *
+     * @return  /DateTime
+     */
+    public function getIsolationStartedAt()
+    {
+        return $this->isolationStartedAt;
+    }
+
+    /**
+     * Set isolationEndAt
+     *
+     * @param /Date $isolationEndAt
+     *
+     * @return User
+     */
+    public function setIsolationEndAt($isolationEndAt)
+    {
+        $this->isolationEndAt = $isolationEndAt;
+
+        return $this;
+    }
+
+    /**
+     * Get isolationEndAt
+     *
+     * @return  /DateTime
+     */
+    public function getIsolationEndAt()
+    {
+        return $this->isolationEndAt;
+    }
+
+    /**
+     * Set location
+     *
+     * @param Location $location
+     *
+     * @return User
+     */
+    public function setLocation(Location $location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * Get location
+     *
+     * @return Location
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAssignedDoctor()
+    {
+        return $this->assignedDoctor;
+    }
+
+    /**
+     * @param null $assignedDoctor
+     */
+    public function setAssignedDoctor($assignedDoctor): void
+    {
+        $this->assignedDoctor = $assignedDoctor;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getChildren() {
+        return $this->children;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param DateTime $createdAt
+     */
+    public function setCreatedAt(DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
 }
