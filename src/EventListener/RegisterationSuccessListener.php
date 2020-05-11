@@ -52,7 +52,7 @@ class RegisterationSuccessListener implements EventSubscriberInterface
         $user->setIsolationStartedAt(new \DateTime());
         $user->setIsolationEndAt(new \DateTime('+14 day'));
         if (in_array('ROLE_USER', $user->getRoles(), true)) {
-            $dql = "SELECT users.assigned_doctor, COUNT(*) AS times FROM users WHERE users.roles LIKE '%ROLE_DOCTOR%' GROUP BY users.assigned_doctor ORDER BY times ASC LIMIT 1";
+            $dql = "SELECT users.assigned_doctor, COUNT(*) AS times FROM users WHERE users.assigned_doctor IS NOT NULL GROUP BY users.assigned_doctor ORDER BY times ASC LIMIT 1";
             $statement = $this->em->getConnection()->prepare($dql);
             $statement->execute();
             $result = $statement->fetchAll();
