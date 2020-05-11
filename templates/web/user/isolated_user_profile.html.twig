@@ -120,6 +120,15 @@
                 </table>
             </div>
         {% endif %}
+        <div class="col-xs-4">
+            <table class="table table-borderless">
+                <tbody>
+                <tr>
+                    <td>رقم الهاتف: {{ user.phoneNumber }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     {% if user.isolations is not empty %}
         <h1 class="display- text-center">جدول المتابعة</h1>
