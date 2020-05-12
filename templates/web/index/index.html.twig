@@ -9,6 +9,10 @@
     <h1 class="display-5 pt-5">تحديث حالات فيروس كورونا (كوڤيد-19) في مصر</h1>
 {% endblock %}
 {% block body %}
+    <div class="alert alert-primary" role="alert">
+        إذا كنت تعاني من بعض الأعراض, تستطيع عمل إختبار إصابة وعزل نفسك من المنزل وسوف يقوم طبيب بمتابعة حالتك و التواصل معك. <a href="{{ path('isolate-yourself') }}">إضغط هنا</a> لمعرفة المزيد.
+    </div>
+
     <div class="row">
         <div class="col-md-6">
             <div class="card mb-4 box-shadow border-light">

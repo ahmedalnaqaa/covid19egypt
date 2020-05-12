@@ -85,6 +85,9 @@
         <a class="p-2 text-dark" href="{{path('corona-test')}}"><span class="p-3 badge badge-warning">إعادة الإختبار مرة إخرى</span></a>
         <a class="p-2 text-dark" href="{{path('index')}}"><span class="p-3 badge badge-primary">العودة</span></a>
     {% else %}
+        <div class="alert alert-primary" role="alert">
+            الأن يمكنك عزل نفسك في المنزل إذا كانت نتيجة إختبارك تدعو للقلق. سوف يقوم طبيب متخصص بمتابعتك. فقط قم بإنهاء الاختبار وإتبع الخطوات بعد ظهور النتيجة.
+        </div>
         {{ form_start(form) }}
         {{ form_widget(form) }}
         <div id="sub-location"></div>
