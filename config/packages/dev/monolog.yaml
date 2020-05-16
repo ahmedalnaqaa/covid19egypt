@@ -8,17 +8,11 @@ monolog:
             action_level: error
             # excluded_404s:
             #     - ^/
-            handler:      deduplicated
-        deduplicated:
-            type:    deduplication
-            handler: swift
-        swift:
-            type:       swift_mailer
-            from_email: 'covid19egypt.org@gmail.com'
-            to_email:   'ahmedalnaqaa@gmail.com'
-            # or list of recipients
-            # to_email:   ['dev1@example.com', 'dev2@example.com', ...]
-            subject:    'An Error Occurred! %%message%%'
-            level:      debug
-            formatter:  monolog.formatter.html
-            content_type: text/html
+            handler:      grouped
+        grouped:
+            type:    group
+            members: [streamed]
+        streamed:
+            type:  stream
+            path:  '%kernel.logs_dir%/%kernel.environment%.log'
+            level: debug
