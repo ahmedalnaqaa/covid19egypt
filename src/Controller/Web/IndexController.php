@@ -125,6 +125,18 @@ class IndexController extends AbstractController
         return [];
     }
 
+    /**
+     * @Route("/isolation-protocol", name="isolation-protocol", methods={"GET"})
+     * @Template()
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function isolationProtocol(Request $request)
+    {
+        return [];
+    }
+
     private function getRequest($url) {
         $cURLConnection = curl_init();
 

@@ -3,7 +3,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    إختباراتي
+    جدول عزل {{ user.fullName }}
     |
     {{ parent() }}
 {% endblock %}
@@ -23,7 +23,7 @@
         {% set symptomsDays = symptomsDays~ ' أيام' %}
     {% endif %}
     <div class="alert alert-warning alert-dismissible fade show" id="alertMessage" role="alert">
-        <p class="text-right">إذا كانت الحالة شديدة الخطورة, اطلب منه التوجه إلى مستشفى العزل فورا أو يتواصل مع الخط الساخن لوزارة الصحة (105)</p>
+        <p class="text-right p-0 m-0">إذا كانت الحالة شديدة الخطورة, اطلب منه التوجه إلى مستشفى العزل فورا أو يتواصل مع الخط الساخن لوزارة الصحة (105)</p>
         <button type="button" class="close text-left" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>

@@ -102,6 +102,9 @@
                         <a class="nav-link" title="نصائح هامة عن الوقاية من فيروس كورونا" href="{{path('advices')}}">نصائح هامة</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" title="إجراءات العزل المنزلي" href="{{path('isolation-protocol')}}">إجراءات العزل</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" title="تحديث الحالات اليومية لفيروس كورونا في مصر" href="{{path('cases')}}">تصفح الحالات</a>
                     </li>
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and not is_granted('ROLE_DOCTOR') %}
