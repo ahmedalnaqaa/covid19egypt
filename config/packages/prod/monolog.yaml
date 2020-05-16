@@ -8,7 +8,14 @@ monolog:
             action_level: error
             # excluded_404s:
             #     - ^/
-            handler:      deduplicated
+            handler:      grouped
+        grouped:
+            type:    group
+            members: [streamed, deduplicated]
+        streamed:
+            type:  stream
+            path:  '%kernel.logs_dir%/%kernel.environment%.log'
+            level: debug
         deduplicated:
             type:    deduplication
             handler: swift
