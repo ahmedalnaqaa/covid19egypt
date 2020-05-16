@@ -90,7 +90,7 @@ class UserController extends AbstractController
     public function userIsolations (Request $request)
     {
         if (!$this->getUser() || in_array('ROLE_DOCTOR', $this->getUser()->getRoles())) {
-            throw new NotFoundHttpException("");
+            return  $this->redirect($this->generateUrl('index', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
         /** @var User $user */
         $user = $this->getUser();
@@ -194,7 +194,7 @@ class UserController extends AbstractController
     public function doctorCases ()
     {
         if (!$this->getUser() || !in_array('ROLE_DOCTOR', $this->getUser()->getRoles())) {
-            throw new NotFoundHttpException("");
+            return  $this->redirect($this->generateUrl('index', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
         /** @var User $doctor */
         $doctor = $this->getUser();
@@ -210,12 +210,12 @@ class UserController extends AbstractController
      *
      * @param User $user
      * @param Request $request
-     * @return array
+     * @return mixed
      */
     public function isolatedUserProfile (User $user, Request $request)
     {
         if (!$this->getUser() || $this->getUser() != $user->getAssignedDoctor()) {
-            throw new UnauthorizedHttpException("You're unauthorized to access this page");
+            return  $this->redirect($this->generateUrl('index', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
 
         return [
