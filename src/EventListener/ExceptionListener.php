@@ -33,7 +33,17 @@ class ExceptionListener
 
     public function onKernelException(ExceptionEvent $event)
     {
-        $ipAddress = $this->request->getCurrentRequest()->getClientIp();
-        $this->logger->error('Error failed for IP: ' . $ipAddress);
+        $ip = false;
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        if(strpos($ip,',') !== false) {
+            $ip = substr($ip,0,strpos($ip,','));
+        }
+        if ($ip) {
+            $this->logger->error('Error failed for IP: ' . $ip);
+        }
     }
 }

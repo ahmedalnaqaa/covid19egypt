@@ -137,28 +137,6 @@ class IndexController extends AbstractController
         return [];
     }
 
-    /**
-     *
-     * @Route("/ip", name="ip")
-     */
-    public function ip ()
-    {
-        $ip = false;
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-            dump('forward');
-        }elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $ip = $_SERVER['REMOTE_ADDR'];
-            dump('addr');
-        }
-        if(strpos($ip,',') !== false) {
-            $ip = substr($ip,0,strpos($ip,','));
-        }
-        dd($ip);
-
-        dd('not found');
-    }
-
     private function getRequest($url) {
         $cURLConnection = curl_init();
 
