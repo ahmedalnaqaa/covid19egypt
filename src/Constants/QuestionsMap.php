@@ -17,7 +17,7 @@ final class QuestionsMap
     const BODY_CHECK_SCORE = 0;
 
     const COUGH_KEY = 'cough';
-    const COUGH_SCORE = 2;
+    const COUGH_SCORE = 3;
 
     const SORE_THROAT_KEY = 'sore-throat';
     const SORE_THROAT_SCORE = 1;
