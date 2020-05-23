@@ -2,7 +2,13 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <link rel="shortcut icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon.png') }}">
+        <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}">
+        <meta name="twitter:site" content="@covid19egypt">
+        <meta name="application-name" content="covid19 egypt كوڤيد-19 مصر">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="كوڤيد-19 مصر">
+        <meta property="og:image" content="{{ asset('images/logo.png') }}">
         <meta name="keywords" content="corona, corona egypt, covid-19,  فيرس كورونا ,كورونا, كورونا مصر, كوڤيد-19, اختبار كورونا, أخر مستجدات فيروس كورونا, الأعراض والإحصائيات‎">
         {% block meta_tags %}
             <meta name="description" content=" تعرف على تحديث الحالات اليومي لفيرس كورونا(كوڤيد-19) و التحديثات السابقة وقم بعمل إختبار إصابة لنفسك">
