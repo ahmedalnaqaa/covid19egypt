@@ -7,12 +7,14 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use KunicMarko\SonataAnnotationBundle\Annotation as Sonata;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ORM\Table(name="blacklists")
- * @Sonata\Admin(label="Blacklists")
+ * @Sonata\Admin(label="Blacklist")
+ * @UniqueEntity("ip")
  */
 class BlackList
 {

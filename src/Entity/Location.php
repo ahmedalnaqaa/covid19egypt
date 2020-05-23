@@ -14,6 +14,8 @@ use KunicMarko\SonataAnnotationBundle\Annotation as Sonata;
  * @ORM\HasLifecycleCallbacks
  * @ORM\Table(name="locations")
  * @Sonata\Admin(label="Locations")
+ * @Sonata\ListAction("show")
+ * @Sonata\ListAction("edit")
  */
 class Location
 {
@@ -22,6 +24,7 @@ class Location
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      * @Sonata\ListField()
+     * @Sonata\ShowField()
      */
     protected $id;
 
@@ -44,6 +47,24 @@ class Location
      * @Sonata\FormField()
      */
     protected $parent = null;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="longitude", type="string", length=32, nullable=true)
+     * @Sonata\ListField()
+     * @Sonata\FormField()
+     */
+    protected $longitude;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="latitude", type="string", length=32, nullable=true)
+     * @Sonata\ListField()
+     * @Sonata\FormField()
+     */
+    protected $latitude;
 
     /**
      * @ORM\OneToMany(targetEntity="\App\Entity\Test", mappedBy="location", fetch="LAZY")
@@ -108,6 +129,38 @@ class Location
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
+    }
+
+    /**
+     * @param string $longitude
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+
+    /**
+     * @param string $latitude
+     */
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
     }
 
     /**

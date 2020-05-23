@@ -6,11 +6,13 @@ namespace App\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use KunicMarko\SonataAnnotationBundle\Annotation as Sonata;
 
 
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
+ * @Sonata\Admin(label="Tests")
  * @ORM\Table(name="tests")
  */
 class Test
@@ -19,40 +21,50 @@ class Test
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Sonata\ListField()
      */
     protected $id;
 
     /**
-     * @Assert\NotBlank()
-     * @ORM\Column(name="data", type="array")
-     */
-    protected $data;
-
-    /**
-     * @var DateTime
+     * @var integer
      *
-     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     * @ORM\Column(name="score", type="smallint", options={"default" = 0})
+     * @Sonata\ListField()
+     * @Sonata\FormField()
      */
-    private $createdAt;
+    protected $score = 0;
 
     /**
      * @ORM\ManyToOne(targetEntity="\App\Entity\Location", inversedBy="tests")
      * @ORM\JoinColumn(name="location_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     * @Sonata\ListField()
+     * @Sonata\FormField()
      */
     protected $location;
 
     /**
      * @ORM\ManyToOne(targetEntity="\App\Entity\User", inversedBy="tests")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     * @Sonata\ListField()
+     * @Sonata\FormField()
      */
     protected $user;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="score", type="smallint", options={"default" = 0})
+     * @var DateTime
+     * @Sonata\ListField()
+     * @Sonata\FormField()
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
-    protected $score = 0;
+    private $createdAt;
+
+    /**
+     * @Assert\NotBlank()
+     * @ORM\Column(name="data", type="array")
+     * @Sonata\ListField()
+     * @Sonata\FormField()
+     */
+    protected $data;
 
     /**
      * @ORM\PrePersist
