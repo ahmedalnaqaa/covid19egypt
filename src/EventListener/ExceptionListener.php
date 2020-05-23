@@ -3,6 +3,7 @@
 // src/EventListener/ExceptionListener.php
 namespace App\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,19 +17,17 @@ class ExceptionListener
      */
     private $logger;
 
-    /**
-     * @var RequestStack
-     */
-    private $request;
+    /** @var EntityManager  */
+    private $em;
 
     /**
      * @param LoggerInterface $logger
-     * @param RequestStack $request
+     * @param EntityManager $em
      */
-    public function __construct(LoggerInterface $logger, RequestStack $request)
+    public function __construct(LoggerInterface $logger, EntityManager $em)
     {
         $this->logger = $logger;
-        $this->request = $request;
+        $this->em = $em;
     }
 
     public function onKernelException(ExceptionEvent $event)
@@ -43,6 +42,12 @@ class ExceptionListener
             $ip = substr($ip,0,strpos($ip,','));
         }
         if ($ip) {
+            $blacklisted = $this->em->getRepository('App:BlackList')->findOneByIp($ip);
+            if ($blacklisted) {
+                $this->logger->error('Existing blacklisted IP still coming back: ' . $ip);
+            } else {
+                $this->logger->error('Add this ip to blacklist: ' . $ip);
+            }
             $this->logger->error('Error failed for IP: ' . $ip);
         }
     }
