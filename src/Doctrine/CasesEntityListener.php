@@ -32,7 +32,6 @@ class CasesEntityListener
         /** @var Cases $entity */
         $entity = $args->getEntity();
         if ($entity instanceof Cases) {
-            dump($entity);
             /** @var Cases $lastCase */
             $lastCase = $this->em->getRepository('App:Cases')->findOneBy([],['id' => 'DESC']);
             $entity->setNewDailyRecovered(($entity->getTotalRecovered() - $lastCase->getTotalRecovered()));
