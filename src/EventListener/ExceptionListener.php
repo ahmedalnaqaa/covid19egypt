@@ -57,8 +57,8 @@ class ExceptionListener
                     $blacklist->setIp($ip);
                     $this->em->persist($blacklist);
                     $this->em->flush();
+                    $this->logger->info('New ip added to blacklist, will track it: ' . $ip);
                 }
-                $this->logger->info('New ip added to blacklist, will track it: ' . $ip);
             }
             $this->logger->error('Error failed for IP: ' . $ip);
         }
