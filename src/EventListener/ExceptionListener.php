@@ -45,7 +45,7 @@ class ExceptionListener
         if ($ip) {
             /** @var BlackList $blacklisted */
             $blacklisted = $this->em->getRepository('App:BlackList')->findOneByIp($ip);
-            if ($blacklisted) {
+            if ($blacklisted && $event->getThrowable()->getMessage() != 'GET /favicon.ico') {
                 $blacklisted->setScore((1+ $blacklisted->getScore()));
                 $this->em->persist($blacklisted);
                 $this->em->flush();
