@@ -2,6 +2,8 @@
 
 namespace App\Controller\Web;
 
+use App\Entity\Location;
+use App\Entity\Test;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -27,10 +29,48 @@ class IndexController extends AbstractController
         $cases = $em->createQuery($dql)->getArrayResult();
         $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
 
-        return [
-            'lastCase' => reset($lastCase),
-            'cases' => $cases
-        ];
+        $viewScores = false;
+        if ($viewScores) {
+            $parentLocations = $em->getRepository('App:Location')->findBy(['parent'=>null]);
+            $testsQB = $em->getRepository('App:Test')->createQueryBuilder('test');
+            $testsQB->andWhere($testsQB->expr()->between('test.createdAt', ':start_date', ':end_date'))
+                ->setParameter(':start_date', date("Y-m-d 00:00:00", strtotime('-3 weeks')))
+                ->setParameter(':end_date', date("Y-m-d 00:00:00"))
+            ;
+            $tests = $testsQB->getQuery()->getResult();
+            $locationsScores = [];
+            $totalScore = 0;
+            /** @var Location $parentLocation */
+            foreach ($parentLocations as  $parentLocation) {
+                $score = 0;
+                /** @var Test $test */
+                foreach ($tests as $test) {
+                    if ($test->getLocation() == $parentLocation
+                        || ($test->getLocation()->getParent()
+                            && $test->getLocation()->getParent() == $parentLocation)) {
+                        $score += $test->getScore();
+                    }
+                }
+                $locationsScores[] = ['location' => $parentLocation, 'score' => $score];
+                $totalScore += $score;
+            }
+            usort($locationsScores, function ($item1, $item2) {
+                return $item2['score'] <=> $item1['score'];
+            });
+            return [
+                'lastCase' => reset($lastCase),
+                'cases' => $cases,
+                'viewScores' => $viewScores,
+                'scores' => $locationsScores,
+                'totalScore' => $totalScore,
+            ];
+        } else {
+            return [
+                'lastCase' => reset($lastCase),
+                'cases' => $cases,
+                'viewScores' => $viewScores,
+            ];
+        }
     }
 
     /**

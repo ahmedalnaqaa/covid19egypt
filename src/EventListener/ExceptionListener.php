@@ -3,6 +3,7 @@
 // src/EventListener/ExceptionListener.php
 namespace App\EventListener;
 
+use App\Entity\BlackList;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -42,11 +43,22 @@ class ExceptionListener
             $ip = substr($ip,0,strpos($ip,','));
         }
         if ($ip) {
+            /** @var BlackList $blacklisted */
             $blacklisted = $this->em->getRepository('App:BlackList')->findOneByIp($ip);
             if ($blacklisted) {
-                $this->logger->error('Existing blacklisted IP still coming back: ' . $ip);
+                $blacklisted->setScore((1+ $blacklisted->getScore()));
+                $this->em->persist($blacklisted);
+                $this->em->flush();
+                $this->logger->info('Existing blacklisted IP still coming back: ' . $ip);
+                $this->logger->info('This ip score is: '.$blacklisted->getScore());
             } else {
-                $this->logger->error('Add this ip to blacklist: ' . $ip);
+                if ($event->getThrowable()->getMessage() != 'GET /favicon.ico') {
+                    $blacklist  = new BlackList();
+                    $blacklist->setIp($ip);
+                    $this->em->persist($blacklist);
+                    $this->em->flush();
+                }
+                $this->logger->info('New ip added to blacklist, will track it: ' . $ip);
             }
             $this->logger->error('Error failed for IP: ' . $ip);
         }

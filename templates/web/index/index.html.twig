@@ -101,6 +101,58 @@
 {% block chart %}
     <div id="linechart_material" class="chart row">
     </div>
+    {% if viewScores %}
+        <hr/>
+        <br/>
+        <div class="container" style="direction: rtl">
+            <h3 class="text-right">نسبة إنتشار الفيرس خلال الأسبوعين القادمين</h3>
+            <p class="text-secondary">هذه النسبة تحدد مستوى إنتشار الفيرس في المحافظات خلال الأسبوعين القادمين من إجمالي عدد الإصابات الجديدة في هذه الفترة بناء على البيانات المتوفرة لدينا</p>
+            <div class="row">
+                <div class="col-xs-4 mr-3 mb-2">
+                    <div class="table-responsive" style="text-align: center; direction: rtl;">
+                        <table class="table table-hover text-center">
+                            <tbody>
+                            {% for score in scores|slice(0,10) %}
+                                <tr>
+                                    <th scope="row">{{ score['location'].title }}</th>
+                                    <td>{{ ((score['score']/totalScore)*100)|round(2) }} %</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-4 mr-3 mb-2">
+                    <div class="table-responsive" style="text-align: center; direction: rtl;">
+                        <table class="table table-hover text-center ">
+                            <tbody>
+                            {% for score in scores|slice(10,10) %}
+                                <tr>
+                                    <th scope="row">{{ score['location'].title }}</th>
+                                    <td>{{ ((score['score']/totalScore)*100)|round(2) }} %</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-xs-4 mr-3 mb-2">
+                    <div class="table-responsive" style="text-align: center; direction: rtl;">
+                        <table class="table table-hover text-center">
+                            <tbody>
+                            {% for score in scores|slice(20,10) %}
+                                <tr>
+                                    <th scope="row">{{ score['location'].title }}</th>
+                                    <td>{{ ((score['score']/totalScore)*100)|round(2) }} %</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

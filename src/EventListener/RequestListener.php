@@ -3,6 +3,7 @@
 // src/EventListener/ExceptionListener.php
 namespace App\EventListener;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -35,7 +36,12 @@ class RequestListener
             $ip = substr($ip,0,strpos($ip,','));
         }
        if ($ip){
-           $blacklisted = $this->em->getRepository('App:BlackList')->findOneByIp($ip);
+           $criteria = new Criteria();
+           $criteria
+               ->where($criteria->expr()->eq('ip', $ip))
+               ->andWhere($criteria->expr()->gte('score', 3))
+           ;
+           $blacklisted = $this->em->getRepository('App:BlackList')->matching($criteria)->first();
            if ($blacklisted) {
                $response = new Response();
 

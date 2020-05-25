@@ -37,6 +37,15 @@ class BlackList
     protected $ip = '';
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="score", type="smallint", options={"default" = 0})
+     * @Sonata\ListField()
+     * @Sonata\FormField()
+     */
+    protected $score = 0;
+
+    /**
      * @var DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
@@ -76,6 +85,29 @@ class BlackList
     public function setIp($ip)
     {
         $this->ip = $ip;
+    }
+    /**
+     * Set score
+     *
+     * @param $score
+     *
+     * @return BlackList
+     */
+    public function setScore($score)
+    {
+        $this->score = $score;
+
+        return $this;
+    }
+
+    /**
+     * Get score
+     *
+     * @return int
+     */
+    public function getScore()
+    {
+        return $this->score;
     }
 
     /**
