@@ -39,11 +39,11 @@ class BlackList
     /**
      * @var integer
      *
-     * @ORM\Column(name="score", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="score", type="smallint", options={"default" = 1})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
-    protected $score = 0;
+    protected $score = 1;
 
     /**
      * @var DateTime
