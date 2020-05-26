@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Entity\Chat;
 use App\Entity\Test;
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
@@ -67,6 +68,10 @@ class RegisterationSuccessListener implements EventSubscriberInterface
             $this->em->persist($testObj);
         }
         $this->em->persist($user);
+        $chat = new Chat();
+        $chat->setPatient($user);
+        $chat->setDoctor($user->getAssignedDoctor());
+        $this->em->persist($chat);
         $this->em->flush();
     }
 }

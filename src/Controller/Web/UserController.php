@@ -2,10 +2,13 @@
 
 namespace App\Controller\Web;
 
+use App\Entity\Chat;
 use App\Entity\Isolation;
+use App\Entity\Message;
 use App\Entity\User;
 use App\Form\DoctorFeedbackType;
 use App\Form\IsolationType;
+use App\Form\MessageType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -94,10 +97,50 @@ class UserController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var Chat $chat */
+        $chat = $em->getRepository('App:Chat')->findOneBy([
+            'patient' => $user,
+            'doctor' => $user->getAssignedDoctor(),
+        ]);
+        $message = new Message();
+        $message->setChat($chat);
+        $form = $this->createMessageForm($message);
 
         return [
-            'isolations' => $user->getIsolations()
+            'isolations' => $user->getIsolations(),
+            'messages' => $chat->getMessages(),
+            'form' => $form->createView(),
         ];
+    }
+
+    /**
+     * @Route("/user/chat/{id}/message", name="create-message", methods={"POST"})
+     * @Template()
+     *
+     * @param Chat $chat
+     * @param Request $request
+     * @return mixed
+     * @throws \Exception
+     */
+    public function postChatMessage(Chat $chat, Request $request)
+    {
+        $message = new Message();
+        $message->setChat($chat);
+        $form = $this->createMessageForm($message);
+
+        $form->handleRequest($request);
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        if ($form->isSubmitted() && $request->getMethod() == 'POST') {
+            $message->setSender($this->getUser());
+            $em->persist($message);
+            $em->flush();
+        }
+        $url = $request->headers->get('referer');
+        return  $this->redirect(strtok($url, '?').'?'.http_build_query(['tab' => 'message']), 302);
     }
 
     /**
@@ -217,10 +260,21 @@ class UserController extends AbstractController
         if (!$this->getUser() || $this->getUser() != $user->getAssignedDoctor()) {
             return  $this->redirect($this->generateUrl('index', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
+        $em = $this->getDoctrine()->getManager();
+        /** @var Chat $chat */
+        $chat = $em->getRepository('App:Chat')->findOneBy([
+            'patient' => $user,
+            'doctor' => $user->getAssignedDoctor(),
+        ]);
+        $message = new Message();
+        $message->setChat($chat);
+        $form = $this->createMessageForm($message);
 
         return [
             'user' => $user,
             'isolations' => $user->getIsolations(),
+            'form' => $form->createView(),
+            'messages' => $chat->getMessages(),
         ];
     }
 
@@ -245,6 +299,17 @@ class UserController extends AbstractController
         return $this->createForm(DoctorFeedbackType::class, $isolation, [
             'action' => $this->generateUrl('isolation-case-feedback', ['id'=> $isolation->getId()])
         ]);
+    }
 
+    /**
+     * @param Message $message
+     * @return FormInterface
+     */
+    private function createMessageForm (Message $message)
+    {
+        return $this->createForm(MessageType::class, $message, [
+            'action' => $this->generateUrl('create-message', ['id'=> $message->getChat()->getId()]),
+            'method' => 'POST'
+        ]);
     }
 }
