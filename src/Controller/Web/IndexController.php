@@ -29,7 +29,7 @@ class IndexController extends AbstractController
         $cases = $em->createQuery($dql)->getArrayResult();
         $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
 
-        $viewScores = false;
+        $viewScores = true;
         if ($viewScores) {
             $parentLocations = $em->getRepository('App:Location')->findBy(['parent'=>null]);
             $testsQB = $em->getRepository('App:Test')->createQueryBuilder('test');
