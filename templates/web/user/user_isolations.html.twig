@@ -18,25 +18,31 @@
 {% endblock %}
 
 {% block body %}
-    <div class="alert alert-success" role="alert">
-        {% if app.user.assignedDoctor %}
+    {% if app.user.assignedDoctor %}
+        <div class="alert alert-success" role="alert">
             {% if app.user.assignedDoctor.fullName is not null %}
-                    مرحبا بك {{ app.user.fullName| split(' ')[0] }}, أنا دكتور {{ app.user.assignedDoctor.fullName| split(' ')[0] }} وأنا هنا لمتابعتك خلال فترة عزلك
+                مرحبا بك {{ app.user.fullName| split(' ')[0] }}, أنا دكتور {{ app.user.assignedDoctor.fullName| split(' ')[0] }} وأنا هنا لمتابعتك خلال فترة عزلك
             {% else %}
                 مرحبا بك {{ app.user.fullName| split(' ')[0] }}, نحن هنا لمتابعتك خلال فترة عزلك.
             {% endif %}
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
     <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link {% if app.request.get('tab') != 'message' %}active{% endif %}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">جدول العزل</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link  {% if app.request.get('tab') == 'message' %}active{% endif %}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">الرسائل</a>
-        </li>
+        {% if app.user.assignedDoctor %}
+            <li class="nav-item">
+                <a class="nav-link {% if app.request.get('tab') != 'message' %}active{% endif %}" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">جدول العزل</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  {% if app.request.get('tab') == 'message' %}active{% endif %}" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">الرسائل</a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">الرسائل</a>
+            </li>
+        {% endif %}
     </ul>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade {% if app.request.get('tab') != 'message' %}show active{% endif %}" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="tab-pane fade {% if app.user.assignedDoctor and app.request.get('tab') != 'message' %}show active{% endif %}" id="home" role="tabpanel" aria-labelledby="home-tab">
             <div class="table-responsive">
                 <table class="table table-hover text-center">
                     <thead>
@@ -121,7 +127,7 @@
                 </table>
             </div>
         </div>
-        <div class="tab-pane fade {% if app.request.get('tab') == 'message' %}show active{% endif %}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="tab-pane fade {% if not app.user.assignedDoctor or app.request.get('tab') == 'message' %}show active{% endif %}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <div class="page-content page-container" id="page-content">
                 <div>
                     <div class="row container d-flex justify-content-center m-0">
@@ -130,19 +136,28 @@
                                 <div class="card-header">
                                 </div>
                                 <div class="ps-container ps-theme-default ps-active-y" id="chat-content" style="overflow-y: scroll !important; height:400px !important;display: flex;flex-direction: column-reverse; direction: ltr;">
+                                    {% if messages is empty %}
+                                        <div class="media media-chat">
+                                            <div class="media-body">
+                                                <p style="direction: rtl;">أهلا {{ app.user.fullName| split(' ')[0] }}</p>
+                                                <p style="direction: rtl;">أنا دكتور {{ chat.doctor.fullName| split(' ')[0] }} و أنا هنا لمساعدتك</p>
+                                                <p>اترك سؤالك وسأقوم بالرد عليك في أقرب وقت</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                     {% for message in messages %}
                                         {% if message.sender == app.user %}
                                             <div class="media media-chat media-chat-reverse">
                                                 <div class="media-body">
                                                     <p>{{ message.message }}</p>
-                                                    <p class="meta"><time datetime="{{ message.createdAt|date('Y') }}">{{ message.createdAt|date('A h:i:s, m/d') }}</time></p>
+                                                    <p class="meta"><time datetime="{{ message.createdAt|date('Y') }}">{{ message.createdAt|date('A h:i, m/d') }}</time></p>
                                                 </div>
                                             </div>
                                         {% else %}
                                             <div class="media media-chat">
                                                 <div class="media-body">
                                                     <p>{{ message.message }}</p>
-                                                    <p class="meta"><time datetime="{{ message.createdAt|date('Y') }}">{{ message.createdAt|date('A h:i:s. m/d') }}</time></p>
+                                                    <p class="meta"><time datetime="{{ message.createdAt|date('Y') }}">{{ message.createdAt|date('A h:i. m/d') }}</time></p>
                                                 </div>
                                             </div>
                                         {% endif %}

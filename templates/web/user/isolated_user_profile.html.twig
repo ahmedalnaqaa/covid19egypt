@@ -56,7 +56,7 @@
                         <tbody>
                         <tr>
                             <td>يسكن في: {{ user.location }}
-                                {% if user.location.parent %}
+                                {% if user.location.parent is defined %}
                                     / {{ user.location.parent }}
                                 {% endif %}
                             </td>

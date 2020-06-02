@@ -114,15 +114,15 @@
                     </li>
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and not is_granted('ROLE_DOCTOR') %}
                         <li class="nav-item">
-                            <a class="nav-link text-danger" href="{{path('user-isolations')}}">صفحة عزلي</a>
+                            <a class="nav-link text-danger" href="{{path('user')}}">الصفحة الشخصية</a>
                         </li>
                     {% endif %}
                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") and is_granted('ROLE_DOCTOR') %}
                         <li class="nav-item">
-                            <a class="nav-link text-danger" href="{{path('doctor-isolations')}}">الحالات</a>
+                            <a class="nav-link text-danger" href="{{path('doctor')}}">الحالات</a>
                         </li>
                     {% endif %}
-                    {% if not is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                    {% if (not is_granted("IS_AUTHENTICATED_REMEMBERED") or not app.user.assignedDoctor) and not is_granted('ROLE_DOCTOR') %}
                         <li class="nav-item">
                             <a title="اختبار الإصابة بكورونا" class="nav-link text-warning ui-widget-shadow" href="{{path('corona-test')}}"><strong class="label label-warning">إختبر نفسك</strong></a>
                         </li>

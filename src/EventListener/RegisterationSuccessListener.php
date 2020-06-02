@@ -44,34 +44,36 @@ class RegisterationSuccessListener implements EventSubscriberInterface
         $test = $event->getRequest()->request->get('fos_user_registration_form')['test'];
         /** @var Test $testObj */
         $testObj = $this->em->getReference('App:Test', $test);
-        /** @var User $user */
-        $user = $this->em->getReference('App:User', $event->getUser()->getId());
-        $symptomsStartSince = $event->getRequest()->request->get('fos_user_registration_form')['symptomsStartSince'];
-        $startDate = date('Y-m-d',(strtotime ( "-{$symptomsStartSince} day" , strtotime ( date('Y-m-d')) )));
-        $ymd = new \DateTime($startDate);
-        $user->setSymptomsStartedAt($ymd);
-        $user->setIsolationStartedAt(new \DateTime());
-        $user->setIsolationEndAt(new \DateTime('+14 day'));
-        if (in_array('ROLE_USER', $user->getRoles(), true)) {
-            $dql = "SELECT users.assigned_doctor, COUNT(*) AS times FROM users WHERE users.assigned_doctor IS NOT NULL GROUP BY users.assigned_doctor ORDER BY times ASC LIMIT 1";
-            $statement = $this->em->getConnection()->prepare($dql);
-            $statement->execute();
-            $result = $statement->fetchAll();
-            if (!empty($result)) {
-                $assignedDoctor = $this->em->getReference('App:User', $result[0]['assigned_doctor']);
-                $user->setAssignedDoctor($assignedDoctor);
+        if ($testObj->getId()) {
+            /** @var User $user */
+            $user = $this->em->getReference('App:User', $event->getUser()->getId());
+            $symptomsStartSince = $event->getRequest()->request->get('fos_user_registration_form')['symptomsStartSince'];
+            $startDate = date('Y-m-d',(strtotime ( "-{$symptomsStartSince} day" , strtotime ( date('Y-m-d')) )));
+            $ymd = new \DateTime($startDate);
+            $user->setSymptomsStartedAt($ymd);
+            $user->setIsolationStartedAt(new \DateTime());
+            $user->setIsolationEndAt(new \DateTime('+14 day'));
+            if (in_array('ROLE_USER', $user->getRoles(), true)) {
+                $dql = "SELECT users.assigned_doctor, COUNT(*) AS times FROM users WHERE users.assigned_doctor IS NOT NULL GROUP BY users.assigned_doctor ORDER BY times ASC LIMIT 1";
+                $statement = $this->em->getConnection()->prepare($dql);
+                $statement->execute();
+                $result = $statement->fetchAll();
+                if (!empty($result)) {
+                    $assignedDoctor = $this->em->getReference('App:User', $result[0]['assigned_doctor']);
+                    $user->setAssignedDoctor($assignedDoctor);
+                }
             }
+            if ($testObj->getId())  {
+                $user->setLocation($testObj->getLocation());
+                $testObj->setUser($user);
+                $this->em->persist($testObj);
+            }
+            $this->em->persist($user);
+            $chat = new Chat();
+            $chat->setPatient($user);
+            $chat->setDoctor($user->getAssignedDoctor());
+            $this->em->persist($chat);
+            $this->em->flush();
         }
-        if ($testObj->getId())  {
-            $user->setLocation($testObj->getLocation());
-            $testObj->setUser($user);
-            $this->em->persist($testObj);
-        }
-        $this->em->persist($user);
-        $chat = new Chat();
-        $chat->setPatient($user);
-        $chat->setDoctor($user->getAssignedDoctor());
-        $this->em->persist($chat);
-        $this->em->flush();
     }
 }

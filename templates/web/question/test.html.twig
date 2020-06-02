@@ -32,8 +32,8 @@
         {% elseif test.score == 5 %}
             <div class="alert alert-primary" role="alert">
                 <span class="lead">النقاط: {{ test.score }}
-                    <a href="{{ path('fos_user_registration_register', {'tid': test.id}) }}" class="btn btn-primary btn-sm">
-                        تواصل مع طبيب الأن
+                    <a href="{{ path('start-isolation', {'tid': test.id}) }}" class="btn btn-primary btn-sm">
+                        إبدأ عزل الأن
                     </a>
                 </span>
                 <h6>
@@ -49,8 +49,8 @@
         {% else %}
             <div class="alert alert-danger" role="alert">
                 <span class="lead">النقاط: {{ test.score }}
-                    <a href="{{ path('fos_user_registration_register', {'tid': test.id}) }}"class="btn btn-danger btn-sm">
-                        تواصل مع طبيب الأن
+                    <a href="{{ path('start-isolation', {'tid': test.id}) }}"class="btn btn-danger btn-sm">
+                        إبدأ عزل الأن
                     </a>
                 </span>
                 <h6>
@@ -59,7 +59,7 @@
                     </svg>
 
                     برجاء التواصل مع الأرقام المعنية لوزارة الصحة (105) لإحتمالية الإصابة .. الحاجة للعلاج وبدء إجراءات العزل الصحي.
-                    أيضا يمكنك بدء العزل المنزلي من <a href="{{ path('fos_user_registration_register', {'tid': test.id}) }}"> هنا </a>
+                    أيضا يمكنك بدء العزل المنزلي من <a href="{{ path('start-isolation', {'tid': test.id}) }}"> هنا </a>
                 </h6>
             </div>
         {% endif %}
@@ -70,8 +70,8 @@
                 <p>ستحتاج عزل نفسك لمدة 14 يوم وسيقوم طبيب متخصص بمتابعة حالتك خلال فترة العزل.</p>
                 <hr>
                 <p class="mb-0">
-                    <a href="{{ path('fos_user_registration_register', {'tid': test.id}) }}"class="btn btn-primary">
-                        تواصل مع طبيب الأن
+                    <a href="{{ path('start-isolation', {'tid': test.id}) }}"class="btn btn-primary">
+                        إبدأ عزل الأن
                     </a>
                 </p>
             </div>

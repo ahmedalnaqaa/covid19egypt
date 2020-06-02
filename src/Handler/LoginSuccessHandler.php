@@ -2,6 +2,7 @@
 
 namespace App\Handler;
 
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,9 +35,9 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
     {
         $url = 'index';
         if (!in_array('ROLE_DOCTOR', $token->getUser()->getRoles()) && sizeof($token->getUser()->getRoles()) == 1) {
-            $url = 'user-isolations';
+            $url = 'user';
         } elseif (in_array('ROLE_DOCTOR', $token->getUser()->getRoles())) {
-            $url = 'doctor-isolations';
+            $url = 'doctor';
         }
         return new RedirectResponse($this->router->generate($url));
     }

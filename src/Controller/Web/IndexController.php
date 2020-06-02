@@ -2,8 +2,10 @@
 
 namespace App\Controller\Web;
 
+use App\Entity\Chat;
 use App\Entity\Location;
 use App\Entity\Test;
+use App\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -11,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class IndexController extends AbstractController
 {
@@ -29,7 +32,7 @@ class IndexController extends AbstractController
         $cases = $em->createQuery($dql)->getArrayResult();
         $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
 
-        $viewScores = true;
+        $viewScores = false;
         if ($viewScores) {
             $parentLocations = $em->getRepository('App:Location')->findBy(['parent'=>null]);
             $testsQB = $em->getRepository('App:Test')->createQueryBuilder('test');
@@ -129,6 +132,83 @@ class IndexController extends AbstractController
             'cases' => $cases,
             'lastCase' => reset($lastCase),
         ];
+    }
+
+    /**
+     * @Route("/ask-doctor", name="ask-doctor", methods={"GET"})
+     * @Template()
+     * @param string $date
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Exception
+     */
+    public function askDoctor ()
+    {
+        if (!$this->getUser()) {
+            return  $this->redirect($this->generateUrl('fos_user_registration_register', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        $chat = $em->getRepository('App:Chat')->findOneBy(['patient' => $user]);
+        if (!$chat) {
+            $chat = new Chat();
+            $chat->setPatient($user);
+            if ($user->getAssignedDoctor()) {
+                $chat->setDoctor($user->getAssignedDoctor());
+            } else {
+                $qb = $em->createQueryBuilder();
+                $qb->select('u')
+                    ->from('App:User', 'u')
+                    ->where($qb->expr()->like('u.roles', ':roles'))
+                    ->setParameter('roles', '%"ROLE_DOCTOR"%');
+
+                $doctors = $qb->getQuery()->getResult();
+                $chat->setDoctor($doctors[array_rand($doctors)]);
+               ;
+            }
+            $em->persist($chat);
+            $em->flush();
+        }
+        return  $this->redirect($this->generateUrl('user', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
+    }
+
+    /**
+     * @Route("/start-isolation", name="start-isolation", methods={"GET"})
+     * @Template()
+     * @param string $date
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \Exception
+     */
+    public function startIsolation(Request $request)
+    {
+        if (!$this->getUser()) {
+            return  $this->redirect($this->generateUrl('fos_user_registration_register', ['tid'=> $request->query->get('tid')], UrlGeneratorInterface::ABSOLUTE_URL), 302);
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$user->getAssignedDoctor()) {
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+            $chat = $em->getRepository('App:Chat')->findOneBy(['patient' => $user]);
+            if ($chat) {
+                $user->setAssignedDoctor($chat->getDoctor());
+                $user->setIsolationStartedAt(new \DateTime());
+                $user->setIsolationEndAt(new \DateTime('+14 day'));
+                $em->persist($user);
+                $em->flush();
+            }
+            if ($request->query->get('tid')) {
+                /** @var Test $test */
+                $test = $em->getReference('App:Test', $request->query->get('tid'));
+                $test->setUser($user);
+                $em->persist($test);
+                $em->flush();
+            }
+        }
+        return  $this->redirect($this->generateUrl('user', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
     }
 
     /**

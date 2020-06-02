@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use function Doctrine\ORM\QueryBuilder;
 
 class UserController extends AbstractController
 {
@@ -83,7 +84,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/isolations", name="user-isolations", methods={"GET"})
+     * @Route("/user", name="user", methods={"GET"})
      * @Template()
      *
      * @param Request $request
@@ -99,11 +100,26 @@ class UserController extends AbstractController
         $user = $this->getUser();
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
+        $query['patient'] = $user;
+        if ($user->getAssignedDoctor()) {
+            $query ['doctor'] = $user->getAssignedDoctor();
+        }
         /** @var Chat $chat */
-        $chat = $em->getRepository('App:Chat')->findOneBy([
-            'patient' => $user,
-            'doctor' => $user->getAssignedDoctor(),
-        ]);
+        $chat = $em->getRepository('App:Chat')->findOneBy($query);
+        if (!$chat) {
+            $qb = $em->createQueryBuilder();
+            $qb->select('u')
+                ->from('App:User', 'u')
+                ->where($qb->expr()->like('u.roles', ':roles'))
+                ->setParameter('roles', '%"ROLE_DOCTOR"%');
+
+            $doctors = $qb->getQuery()->getResult();
+            $chat = new Chat();
+            $chat->setPatient($user);
+            $chat->setDoctor($doctors[array_rand($doctors)]);
+            $em->persist($chat);
+            $em->flush();
+        }
         $message = new Message();
         $message->setChat($chat);
         $form = $this->createMessageForm($message);
@@ -112,6 +128,7 @@ class UserController extends AbstractController
             'isolations' => $user->getIsolations(),
             'messages' => $chat->getMessages(),
             'form' => $form->createView(),
+            'chat' => $chat
         ];
     }
 
@@ -189,7 +206,7 @@ class UserController extends AbstractController
             $isolation->setUser($this->getUser());
             $em->persist($isolation);
             $em->flush();
-            return  $this->redirect($this->generateUrl('user-isolations', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
+            return  $this->redirect($this->generateUrl('user', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
 
         return [
@@ -227,12 +244,10 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/doctor/isolations", name="doctor-isolations", methods={"GET"})
+     * @Route("/doctor", name="doctor", methods={"GET"})
      * @Template()
      *
-     * @param Request $request
      * @return mixed
-     * @throws \Exception
      */
     public function doctorCases ()
     {
@@ -241,9 +256,24 @@ class UserController extends AbstractController
         }
         /** @var User $doctor */
         $doctor = $this->getUser();
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        $cases = [];
+        /** @var User $case */
+        foreach ($doctor->getChildren() as $case) {
+            $cases[] = $case->getId();
+        }
+        $qb = $em->createQueryBuilder();
+        $qb->select('c')
+            ->from('App:Chat', 'c')
+            ->where($qb->expr()->notIn('c.patient', $cases))
+            ->andWhere($qb->expr()->eq('c.doctor', $doctor->getId()))
+        ;
 
+        $chats = $qb->getQuery()->getResult();
         return [
-            'users' => $doctor->getChildren()
+            'users' => $doctor->getChildren(),
+            'chats' => $chats
         ];
     }
 
@@ -257,15 +287,17 @@ class UserController extends AbstractController
      */
     public function isolatedUserProfile (User $user, Request $request)
     {
-        if (!$this->getUser() || $this->getUser() != $user->getAssignedDoctor()) {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $doctor */
+        $doctor = $this->getUser();
+        $chat = $em->getRepository('App:Chat')->findOneBy([
+            'doctor' => $doctor,
+            'patient' => $user,
+        ]);
+        if (!$this->getUser() || !$chat) {
             return  $this->redirect($this->generateUrl('index', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
-        $em = $this->getDoctrine()->getManager();
-        /** @var Chat $chat */
-        $chat = $em->getRepository('App:Chat')->findOneBy([
-            'patient' => $user,
-            'doctor' => $user->getAssignedDoctor(),
-        ]);
         $message = new Message();
         $message->setChat($chat);
         $form = $this->createMessageForm($message);

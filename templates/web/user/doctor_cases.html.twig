@@ -3,95 +3,149 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    الحالات المعزولة
+    حالاتي
     |
     {{ parent() }}
 {% endblock %}
 
 {% block header %}
-    <h1 class="display-5">الحالات المعزولة</h1>
+    <h1 class="display-5">حالاتي</h1>
     <p></p>
 {% endblock %}
 
 {% block body %}
-    {% if users is not empty %}
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th scope="col">الإسم</th>
-                    <th scope="col">معزول منذ</th>
-                    <th scope="col">بداية ظهور الأعراض</th>
-                    <th scope="col">بداية العزل</th>
-                    <th scope="col">نهاية العزل</th>
-                    <th scope="col">تاريخ أخر فحص</th>
-                    <th scope="col">الحالة</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for user in users %}
-                    {% set isolationStartedAt = user.isolationStartedAt|date('d-m-Y') %}
-                    {% set today = "now"|date('d-m-Y') %}
-                    {% set difference = date(today).diff(date(isolationStartedAt))%}
-                    {% set leftDays = difference.days %}
-                    {% if isolationStartedAt == today %}
-                        {% set leftDays = 'يوم واحد' %}
-                    {% elseif leftDays > 9 %}
-                        {% set leftDays = leftDays~ ' يوم' %}
-                    {% elseif leftDays == 2 %}
-                        {% set leftDays = 'يومان' %}
-                    {% else %}
-                        {% set leftDays = leftDays~ ' أيام' %}
-                    {% endif %}
-
-                    {% set symptomsStartedAt = user.symptomsStartedAt|date('d-m-Y') %}
-                    {% set symptomsDateDifference = date(today).diff(date(symptomsStartedAt))%}
-                    {% set symptomsDays = symptomsDateDifference.days %}
-                    {% if symptomsStartedAt == today %}
-                        {% set symptomsDays = 'يوم واحد' %}
-                    {% elseif symptomsDays > 9 %}
-                        {% set symptomsDays = symptomsDays~ ' يوم' %}
-                    {% elseif symptomsDays == 2 %}
-                        {% set symptomsDays = 'يومان' %}
-                    {% else %}
-                        {% set symptomsDays = symptomsDays~ ' أيام' %}
-                    {% endif %}
-
-                    <tr>
-                        <th scope="row"><a href="{{ path('user-case-profile', {'id': user.id}) }}" target="_blank">{{ user.fullName }}</a></th>
-                        <td>{{ user.isolationStartedAt|date('m/d') }}
-                            <span class="badge badge-primary">{{ leftDays }}</span>
-                        </td>
-                        <td>{{ user.symptomsStartedAt|date('m/d') }}
-                            <span class="badge badge-primary">{{ symptomsDays }}</span>
-                        </td>
-                        <td>{{ user.isolationStartedAt|date('m/d') }}</td>
-                        <td>{{ user.isolationEndAt|date('m/d') }}</td>
-                        <td>
-                            {% if user.isolations is not empty %}
-                                {{ (user.isolations|last).createdAt|date('m/d') }}
-                            {% else %}
-                                لا يوجد
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if user.isolations is not empty %}
-                                {% if (user.isolations|last).doctorComment is empty %}
-                                    <span class="badge badge-danger">يحتاج مراجعة</span>
-                                {% else %}
-                                    <span class="badge badge-success">تم مراجعته</span>
-                                {% endif %}
-                            {% else %}
-                                <span class="badge badge-primary">لم يحدث حالته حتى الأن</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-cases-tab" data-toggle="tab" href="#nav-cases" role="tab" aria-controls="nav-cases" aria-selected="true">الحالات</a>
+            <a class="nav-item nav-link" id="nav-questions-tab" data-toggle="tab" href="#nav-questions" role="tab" aria-controls="nav-questions" aria-selected="false">الأسئلة</a>
         </div>
-    {% else %}
-        <hr/>
-        <p class="text-primary text-center"> لا يوجد لديك حالات حتى الأن, قم بإعادة المحاولة بعد قليل</p>
-    {% endif %}
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-cases" role="tabpanel" aria-labelledby="nav-cases-tab">
+            {% if users is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">الإسم</th>
+                            <th scope="col">معزول منذ</th>
+                            <th scope="col">بداية ظهور الأعراض</th>
+                            <th scope="col">بداية العزل</th>
+                            <th scope="col">نهاية العزل</th>
+                            <th scope="col">تاريخ أخر فحص</th>
+                            <th scope="col">الحالة</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            {% set isolationStartedAt = user.isolationStartedAt|date('d-m-Y') %}
+                            {% set today = "now"|date('d-m-Y') %}
+                            {% set difference = date(today).diff(date(isolationStartedAt))%}
+                            {% set leftDays = difference.days %}
+                            {% if isolationStartedAt == today %}
+                                {% set leftDays = 'يوم واحد' %}
+                            {% elseif leftDays > 9 %}
+                                {% set leftDays = leftDays~ ' يوم' %}
+                            {% elseif leftDays == 2 %}
+                                {% set leftDays = 'يومان' %}
+                            {% else %}
+                                {% set leftDays = leftDays~ ' أيام' %}
+                            {% endif %}
+
+                            {% set symptomsStartedAt = user.symptomsStartedAt|date('d-m-Y') %}
+                            {% set symptomsDateDifference = date(today).diff(date(symptomsStartedAt))%}
+                            {% set symptomsDays = symptomsDateDifference.days %}
+                            {% if symptomsStartedAt == today %}
+                                {% set symptomsDays = 'يوم واحد' %}
+                            {% elseif symptomsDays > 9 %}
+                                {% set symptomsDays = symptomsDays~ ' يوم' %}
+                            {% elseif symptomsDays == 2 %}
+                                {% set symptomsDays = 'يومان' %}
+                            {% else %}
+                                {% set symptomsDays = symptomsDays~ ' أيام' %}
+                            {% endif %}
+
+                            <tr>
+                                <th scope="row"><a href="{{ path('user-case-profile', {'id': user.id}) }}" target="_blank">{{ user.fullName }}</a></th>
+                                <td>{{ user.isolationStartedAt|date('m/d') }}
+                                    <span class="badge badge-primary">{{ leftDays }}</span>
+                                </td>
+                                <td>{{ user.symptomsStartedAt|date('m/d') }}
+                                    <span class="badge badge-primary">{{ symptomsDays }}</span>
+                                </td>
+                                <td>{{ user.isolationStartedAt|date('m/d') }}</td>
+                                <td>{{ user.isolationEndAt|date('m/d') }}</td>
+                                <td>
+                                    {% if user.isolations is not empty %}
+                                        {{ (user.isolations|last).createdAt|date('m/d') }}
+                                    {% else %}
+                                        لا يوجد
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.isolations is not empty %}
+                                        {% if (user.isolations|last).doctorComment is empty %}
+                                            <span class="badge badge-danger">يحتاج مراجعة</span>
+                                        {% else %}
+                                            <span class="badge badge-success">تم مراجعته</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge badge-primary">لم يحدث حالته حتى الأن</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <br/>
+                <p class="text-primary text-center"> لا يوجد لديك حالات حتى الأن, قم بإعادة المحاولة بعد قليل</p>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="nav-questions" role="tabpanel" aria-labelledby="nav-questions-tab">
+            {% if chats is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">الإسم</th>
+                            <th scope="col">أخر رسالة منذ</th>
+                            <th scope="col">يحتاج رد؟</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for chat in chats %}
+                            {% set lastMessage = (chat.messages)|first %}
+                            <tr>
+                                <th scope="row"><a href="{{ path('user-case-profile', {'id': chat.patient.id}) }}" target="_blank">{{ chat.patient.fullName }}</a></th>
+                                <td>
+                                    {% if lastMessage %}
+                                        {{ lastMessage.createdAt|date('A h:i, m/d') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if lastMessage %}
+                                        {% if lastMessage.sender == app.user %}
+                                            <span class="badge badge-primary">لا</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">نعم</span>
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <br/>
+                <p class="text-primary text-center"> لا يوجد أسئلة حتى الأن</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
