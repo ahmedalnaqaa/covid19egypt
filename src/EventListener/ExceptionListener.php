@@ -45,21 +45,20 @@ class ExceptionListener
         if ($ip) {
             /** @var BlackList $blacklisted */
             $blacklisted = $this->em->getRepository('App:BlackList')->findOneByIp($ip);
-//            if ($blacklisted && $event->getThrowable()->getMessage() != 'No route found for "GET /favicon.ico"') {
-//                $blacklisted->setScore((1+ $blacklisted->getScore()));
-//                $this->em->persist($blacklisted);
-//                $this->em->flush();
-//                $this->logger->info('Existing blacklisted IP still coming back: ' . $ip);
-//                $this->logger->info('This ip score is: '.$blacklisted->getScore());
-//            } else {
-//                if ($event->getThrowable()->getMessage() != 'No route found for "GET /favicon.ico"') {
-//                    $blacklist  = new BlackList();
-//                    $blacklist->setIp($ip);
-//                    $this->em->persist($blacklist);
-//                    $this->em->flush();
-//                    $this->logger->info('New ip added to blacklist, will track it: ' . $ip);
-//                }
-//            }
+            if ($blacklisted && $event->getThrowable()->getMessage() != 'No route found for "GET /favicon.ico"') {
+                $blacklisted->setScore((1+ $blacklisted->getScore()));
+                $this->em->persist($blacklisted);
+                $this->em->flush();
+                $this->logger->info('Existing blacklisted IP still coming back: ' . $ip);
+                $this->logger->info('This ip score is: '.$blacklisted->getScore());
+            } else {
+                if ($event->getThrowable()->getMessage() != 'No route found for "GET /favicon.ico"') {
+                    $blacklist  = new BlackList();
+                    $blacklist->setIp($ip);
+                    $this->em->persist($blacklist);
+                    $this->em->flush();
+                    $this->logger->info('New ip added to blacklist, will track it: ' . $ip);
+                }}
             $this->logger->error('Error failed for IP: ' . $ip);
         }
     }
