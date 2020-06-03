@@ -241,6 +241,8 @@
     </div>
 {% endblock %}
 {% block chart %}
+    <br/>
+    <h4 class="text-right">رسم تحليلي للحالات بتاريخ {{ case.createdAt|date('Y-m-d') }}</h4>
     <div id="linechart_material" class="chart row">
     </div>
 {% endblock %}

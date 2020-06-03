@@ -6,19 +6,28 @@
     {{parent()}}
 {% endblock %}
 {% block header %}
-    <h1 class="display-5 pt-5">تحديث حالات فيروس كورونا (كوڤيد-19) في مصر</h1>
-    <p>
-        إجمالي المصابين: <strong class="text-primary">{{ lastCase.totalCases }}</strong>,
-        حالات نشطة: <strong class="text-warning">{{ lastCase.totalCases - (lastCase.totalRecovered + lastCase.totalDeaths) }}</strong>,
-        حالات الشفاء: <strong class="text-success">{{ lastCase.totalRecovered }}</strong>,
-        وفيات: <strong class="text-danger">{{ lastCase.totalDeaths }}</strong>
-    </p>
-    <p>
-        <i> بين كل مليون شخص يوجد {{ (lastCase.totalCases/100)|round }} مصاب</i>
-    </p>
+    <h2 class="display-5 pt-5"> حالات فيروس كورونا (كوڤيد-19) في مصر</h2>
+    {% if not app.request.get('page') %}
+        <p>
+            إجمالي المصابين: <strong class="text-primary">{{ lastCase.totalCases }}</strong>,
+            حالات نشطة: <strong class="text-warning">{{ lastCase.totalCases - (lastCase.totalRecovered + lastCase.totalDeaths) }}</strong>,
+            حالات الشفاء: <strong class="text-success">{{ lastCase.totalRecovered }}</strong>,
+            وفيات: <strong class="text-danger">{{ lastCase.totalDeaths }}</strong>
+        </p>
+        <p>
+            <i> بين كل مليون شخص يوجد {{ (lastCase.totalCases/100)|round }} مصاب</i>
+        </p>
+    {% endif %}
 {% endblock %}
 {% block body %}
-    <div class="table-responsive">
+<div id="cases_linechart" class="chart row">
+</div>
+    <br/>
+    <p class="text-center text-secondary"><i>
+           من {{ (cases|first).createdAt|date('d-m-Y') }} إالى {{ (cases|last).createdAt|date('d-m-Y') }}
+        </i></p>
+<br/>
+<div class="table-responsive">
         <table id="egStatus" class="table table-hover table-bordered text-center">
             <thead class="thead-light">
             <tr>
@@ -70,8 +79,44 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
+        google.charts.load('current', {'packages':['line']});
+        google.charts.setOnLoadCallback(drawLineChart);
+
+        function drawLineChart() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('date', '');
+            data.addColumn('number', 'حالات جديدة');
+            data.addColumn('number', 'حالات الشفاء');
+            data.addColumn('number', 'حالات الوفاة');
+
+            data.addRows([
+                {% for case in cases|slice(0,50) %}
+                {% set year = case.createdAt|date("Y") %}
+                {% set month = case.createdAt|date("m") - 1 %}
+                {% set day = case.createdAt|date("d") %}
+
+                [
+                    new Date({{ year}}, {{ month }}, {{ day }}),
+                    {{ case.newDailyCases }},
+                    {{ case.newDailyRecovered }},
+                    {{ case.newDailyDeaths }}
+                ]
+                {% if loop.index != cases|length %}, {% endif %}
+                {% endfor %}
+            ]);
+
+            var options = {
+                colors: ['blue', 'green', 'red']
+            };
+
+            var chart = new google.charts.Line(document.getElementById('cases_linechart'));
+
+            chart.draw(data, google.charts.Line.convertOptions(options));
+        }
+
      setTimeout(function(){
             $("#exampleModal").modal('show');
         }, 20000);
