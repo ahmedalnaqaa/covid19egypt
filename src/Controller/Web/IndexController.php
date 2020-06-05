@@ -2,6 +2,7 @@
 
 namespace App\Controller\Web;
 
+use App\Entity\Cases;
 use App\Entity\Chat;
 use App\Entity\Location;
 use App\Entity\Test;
@@ -23,6 +24,7 @@ class IndexController extends AbstractController
      *
      * @param Request $request
      * @return array
+     * @throws \Exception
      */
     public function index(Request $request)
     {
@@ -30,8 +32,12 @@ class IndexController extends AbstractController
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         $cases = $em->createQuery($dql)->getArrayResult();
-        $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
-
+        /** @var Cases $lastCase */
+        $lastCase = $em->getRepository('App:Cases')->findOneBy([], ['createdAt' => 'DESC']);
+        $lastCaseDate = new \DateTime($lastCase->getCreatedAt()->format('Y-m-d'));
+        /** @var Cases $lastTwoWeeks */
+        $lastTwoWeeks = $em->getRepository('App:Cases')->findOneBy(['createdAt' => $lastCaseDate->modify('-13 day')]);
+        $statistics = $this->generateStatistics($lastCase, $lastTwoWeeks);
         $viewScores = false;
         if ($viewScores) {
             $parentLocations = $em->getRepository('App:Location')->findBy(['parent'=>null]);
@@ -61,17 +67,19 @@ class IndexController extends AbstractController
                 return $item2['score'] <=> $item1['score'];
             });
             return [
-                'lastCase' => reset($lastCase),
+                'lastCase' => $lastCase,
                 'cases' => $cases,
                 'viewScores' => $viewScores,
                 'scores' => $locationsScores,
                 'totalScore' => $totalScore,
+                'statistics' => $statistics,
             ];
         } else {
             return [
-                'lastCase' => reset($lastCase),
+                'lastCase' => $lastCase,
                 'cases' => $cases,
                 'viewScores' => $viewScores,
+                'statistics' => $statistics,
             ];
         }
     }
@@ -81,6 +89,7 @@ class IndexController extends AbstractController
      * @Template()
      * @param Request $request
      * @return array
+     * @throws \Exception
      */
     public function egyptCases (Request $request)
     {
@@ -94,11 +103,16 @@ class IndexController extends AbstractController
             $request->query->getInt('page', 1), /*page number*/
             14
         );
-        $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
-
+        /** @var Cases $lastCase */
+        $lastCase = $em->getRepository('App:Cases')->findOneBy([], ['createdAt' => 'DESC']);
+        $lastCaseDate = new \DateTime($lastCase->getCreatedAt()->format('Y-m-d'));
+        /** @var Cases $lastTwoWeeks */
+        $lastTwoWeeks = $em->getRepository('App:Cases')->findOneBy(['createdAt' => $lastCaseDate->modify('-13 day')]);
+        $statistics = $this->generateStatistics($lastCase, $lastTwoWeeks);
         return [
-            'lastCase' => reset($lastCase),
-            'cases' => $pagination
+            'lastCase' => $lastCase,
+            'cases' => $pagination,
+            'statistics' => $statistics,
         ];
     }
 
@@ -257,7 +271,8 @@ class IndexController extends AbstractController
         return [];
     }
 
-    private function getRequest($url) {
+    private function getRequest($url)
+    {
         $cURLConnection = curl_init();
 
         curl_setopt($cURLConnection, CURLOPT_URL, $url);
@@ -267,5 +282,21 @@ class IndexController extends AbstractController
         curl_close($cURLConnection);
 
         return json_decode($statusList, true)['result'];
+    }
+
+    /**
+     * @param Cases $currentCase
+     * @param Cases $lastCase
+     * @return mixed
+     */
+    private function generateStatistics (Cases $currentCase, Cases $lastCase)
+    {
+        $statics['cases'] = (int) round(($currentCase->getTotalCases() / $lastCase->getTotalCases()) * $currentCase->getTotalCases());
+        $statics['recovered']['total'] = (int) round(($currentCase->getTotalRecovered() / $lastCase->getTotalRecovered()) * $currentCase->getTotalRecovered());
+        $statics['recovered']['percentage'] = round(($statics['recovered']['total']/$statics['cases']) * 100, 1);
+        $statics['deaths']['total'] = (int) round(($currentCase->getTotalDeaths() / $lastCase->getTotalDeaths()) * $currentCase->getTotalDeaths());
+        $statics['deaths']['percentage'] = round(($statics['deaths']['total']/$statics['cases']) * 100, 1);
+
+        return $statics;
     }
 }

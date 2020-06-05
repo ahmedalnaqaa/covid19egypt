@@ -15,7 +15,11 @@
             وفيات: <strong class="text-danger">{{ lastCase.totalDeaths }}</strong>
         </p>
         <p>
-            <i> بين كل مليون شخص يوجد {{ (lastCase.totalCases/100)|round }} مصاب</i>
+                بين كل مليون شخص يوجد {{ (lastCase.totalCases/100)|round }} مصاب
+             و
+            {% set maxP = ((cases|first).totalCases / (cases|last).totalCases)|round(0) %}
+            {% set minP = ((cases|first).totalCases / (cases|last).totalCases)|round(0, 'floor') %}
+            الشخص المصاب ينقل العدوى لـ {{ minP }}~{{ maxP }} أشخاص أخرين
         </p>
     {% endif %}
 {% endblock %}

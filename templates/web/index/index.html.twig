@@ -175,6 +175,46 @@
             </div>
         </div>
     {% endif %}
+    <br/><hr/>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="expectedPiechart" class="chart row"></div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4 box-shadow border-light">
+                <div class="card-header text-bold text-center text-danger">
+                    <strong>توقعات تقريبية بعد أسبوعين</strong>
+                </div>
+                <div class="card-body text-center" style="direction: rtl;">
+                    <table class="table table-borderless text-center lead">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">الإصابات</th>
+                            <th scope="col">الشفاء</th>
+                            <th scope="col">الوفاة</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">اليوم</th>
+                            <td>{{ lastCase.totalCases }}</td>
+                            <td>{{ lastCase.totalRecovered }}</td>
+                            <td>{{ lastCase.totalDeaths }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">بعد أسبوعين</th>
+                            <td>{{ statistics['cases'] }}</td>
+                            <td>{{ statistics['recovered']['total'] }}</td>
+                            <td>{{ statistics['deaths']['total'] }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
@@ -201,6 +241,29 @@
 
             chart.draw(data, options);
         }
+
+        ///////////////////////////////////////////////////////////
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.setOnLoadCallback(drawExpectedPieChart);
+
+        function drawExpectedPieChart() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['حالات الشفاء', {{ statistics['recovered']['total'] }}],
+                ['الوفيات',  {{ statistics['deaths']['total'] }}],
+                ['حالات مصابة نشطة', {{ statistics['cases'] - (statistics['recovered']['total'] + statistics['deaths']['total']) }}],
+            ]);
+
+            var options = {
+                colors: ['green', 'red', 'orange']
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('expectedPiechart'));
+
+            chart.draw(data, options);
+        }
+        ///////////////////////////////////////////////////////////
 
         google.charts.load('current', {'packages': ['line']});
         google.charts.setOnLoadCallback(drawLineChart);
