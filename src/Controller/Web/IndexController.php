@@ -92,7 +92,7 @@ class IndexController extends AbstractController
         $pagination = $paginator->paginate(
             $query, /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
-            25
+            14
         );
         $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
 
@@ -142,10 +142,10 @@ class IndexController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws \Exception
      */
-    public function askDoctor ()
+    public function askDoctor (Request $request)
     {
         if (!$this->getUser()) {
-            return  $this->redirect($this->generateUrl('fos_user_registration_register', [], UrlGeneratorInterface::ABSOLUTE_URL), 302);
+            return  $this->redirect($this->generateUrl('fos_user_registration_register', ['tid'=> $request->query->get('tid')], UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
         /** @var User $user */
         $user = $this->getUser();
