@@ -37,7 +37,7 @@ class IndexController extends AbstractController
         $lastCaseDate = new \DateTime($lastCase->getCreatedAt()->format('Y-m-d'));
         /** @var Cases $lastTwoWeeks */
         $lastTwoWeeks = $em->getRepository('App:Cases')->findOneBy(['createdAt' => $lastCaseDate->modify('-13 day')]);
-        $statistics = $this->generateStatistics($lastCase, $lastTwoWeeks);
+        $statistics = $this->generateStatistics(array_slice($cases,0, 28));
         $viewScores = false;
         if ($viewScores) {
             $parentLocations = $em->getRepository('App:Location')->findBy(['parent'=>null]);
@@ -105,14 +105,9 @@ class IndexController extends AbstractController
         );
         /** @var Cases $lastCase */
         $lastCase = $em->getRepository('App:Cases')->findOneBy([], ['createdAt' => 'DESC']);
-        $lastCaseDate = new \DateTime($lastCase->getCreatedAt()->format('Y-m-d'));
-        /** @var Cases $lastTwoWeeks */
-        $lastTwoWeeks = $em->getRepository('App:Cases')->findOneBy(['createdAt' => $lastCaseDate->modify('-13 day')]);
-        $statistics = $this->generateStatistics($lastCase, $lastTwoWeeks);
         return [
             'lastCase' => $lastCase,
             'cases' => $pagination,
-            'statistics' => $statistics,
         ];
     }
 
@@ -285,16 +280,34 @@ class IndexController extends AbstractController
     }
 
     /**
-     * @param Cases $currentCase
-     * @param Cases $lastCase
+     * @param array $cases
      * @return mixed
      */
-    private function generateStatistics (Cases $currentCase, Cases $lastCase)
+    private function generateStatistics ($cases = [])
     {
-        $statics['cases'] = (int) round(($currentCase->getTotalCases() / $lastCase->getTotalCases()) * $currentCase->getTotalCases());
-        $statics['recovered']['total'] = (int) round(($currentCase->getTotalRecovered() / $lastCase->getTotalRecovered()) * $currentCase->getTotalRecovered());
+        $casesRanges = [];
+        $recoveredRanges = [];
+        $deathsRanges = [];
+        /**
+         * @var  $key
+         * @var Cases $case
+         */
+        foreach (array_slice($cases,0,14) as $key => $case){
+            /** @var Cases $caseToCompareWith */
+            $caseToCompareWith = $cases[$key+14];
+            $casesRanges[] = round(($case['totalCases'] / $caseToCompareWith['totalCases']), 1);
+            $recoveredRanges[] = round(($case['totalRecovered'] / $caseToCompareWith['totalRecovered']), 1);
+            $deathsRanges[] = round(($case['totalDeaths'] / $caseToCompareWith['totalDeaths']), 1);
+        }
+
+        $casesRange = round(array_sum($casesRanges)/14, 1);
+        $recoveredRange = round(array_sum($recoveredRanges)/14, 1);
+        $deathsRange = round(array_sum($deathsRanges)/14, 1);
+
+        $statics['cases'] = (int) round($casesRange * $cases[0]['totalCases']);
+        $statics['recovered']['total'] = (int) round($recoveredRange * $cases[0]['totalRecovered']);
         $statics['recovered']['percentage'] = round(($statics['recovered']['total']/$statics['cases']) * 100, 1);
-        $statics['deaths']['total'] = (int) round(($currentCase->getTotalDeaths() / $lastCase->getTotalDeaths()) * $currentCase->getTotalDeaths());
+        $statics['deaths']['total'] = (int) round($deathsRange * $cases[0]['totalDeaths']);
         $statics['deaths']['percentage'] = round(($statics['deaths']['total']/$statics['cases']) * 100, 1);
 
         return $statics;
