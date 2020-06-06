@@ -123,6 +123,62 @@
                     <div id="piechart" class="chart row"></div>
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4 box-shadow border-light">
+                    <div class="card-header text-bold text-center text-danger">
+                        <strong>توقعات تقريبية بعد أسبوعين</strong>
+                    </div>
+                    <div class="card-body text-center table-responsive">
+                        <table class="table table-borderless text-center">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">الإصابات</th>
+                                <th scope="col">الشفاء</th>
+                                <th scope="col">الوفاة</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">الإجمالي اليوم</th>
+                                <td>{{ lastCase.totalCases }}</td>
+                                <td>{{ lastCase.totalRecovered }}</td>
+                                <td>{{ lastCase.totalDeaths }}</td>
+                            </tr>
+                            <tr>
+                                {% set recoveredPercentage = ((lastCase.totalRecovered / lastCase.totalCases) * 100)|round(1) %}
+                                {% set deathsPercentage = ((lastCase.totalDeaths / lastCase.totalCases) * 100)|round(1) %}
+                                <th scope="row">بعد أسبوعين</th>
+                                <td>{{ statistics['cases'] }}</td>
+                                <td>
+                                    {{ statistics['recovered']['total'] }}
+                                    {% if statistics['recovered']['percentage'] > recoveredPercentage %}
+                                        <small style="font-size: 14px;" title="تحسن بنسبة {{ statistics['recovered']['percentage'] - recoveredPercentage }}%+" class="text-success">{{ statistics['recovered']['percentage'] - recoveredPercentage }}%+</small>
+                                    {% else %}
+                                        <small style="font-size: 14px;" title="إنخفاض بنسبة {{ recoveredPercentage - statistics['recovered']['percentage'] }}%-" class="text-danger">{{ recoveredPercentage - statistics['recovered']['percentage'] }}%-</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ statistics['deaths']['total'] }}
+                                    {% if statistics['deaths']['percentage'] < deathsPercentage %}
+                                        <small style="font-size: 14px;" title="إنخفاض بنسبة {{ deathsPercentage - statistics['deaths']['percentage'] }}%-" class="text-success">
+                                            {{ deathsPercentage - statistics['deaths']['percentage'] }}%-
+                                        </small>
+                                    {% else %}
+                                        <small style="font-size: 14px;" title="زيادة بنسبة {{ statistics['deaths']['percentage'] - deathsPercentage }}%" class="text-danger">{{ statistics['deaths']['percentage'] - deathsPercentage }}%+</small>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="expectedPiechart" class="chart row"></div>
+            </div>
         {% else %}
             <div class="col-md-6">
                 <div class="card-header text-bold text-center">
@@ -334,7 +390,27 @@
 
                 chart.draw(data, options);
             }
+    {% else %}
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.setOnLoadCallback(drawExpectedPieChart);
 
+        function drawExpectedPieChart() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['حالات الشفاء', {{ statistics['recovered']['total'] }}],
+                ['الوفيات',  {{ statistics['deaths']['total'] }}],
+                ['حالات مصابة نشطة', {{ statistics['cases'] - (statistics['recovered']['total'] + statistics['deaths']['total']) }}],
+            ]);
+
+            var options = {
+                colors: ['green', 'red', 'orange']
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('expectedPiechart'));
+
+            chart.draw(data, options);
+        }
     {% endif %}
     </script>
 {% endblock %}

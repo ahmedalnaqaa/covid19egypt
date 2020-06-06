@@ -132,14 +132,19 @@ class IndexController extends AbstractController
         if (!$case) {
             throw new NotFoundHttpException("Date not found");
         }
-        $lastCase = $em->getRepository('App:Cases')->findBy([], ['createdAt' => 'DESC'], 1);
+        /** @var Cases $lastCase */
+        $lastCase = $em->getRepository('App:Cases')->findOneBy([], ['createdAt' => 'DESC']);
         $dql   = "SELECT c FROM App\Entity\Cases c WHERE  c.createdAt <= ?1 ORDER BY c.createdAt DESC";
         $cases = $em->createQuery($dql)->setParameter(1, new \DateTime($date))->getArrayResult();
-
+        $statistics = [];
+        if ($lastCase == $case) {
+            $statistics = $this->generateStatistics($cases);
+        }
         return [
             'case' => $case,
             'cases' => $cases,
-            'lastCase' => reset($lastCase),
+            'lastCase' => $lastCase,
+            'statistics' => $statistics,
         ];
     }
 
