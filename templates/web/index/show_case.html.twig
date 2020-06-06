@@ -153,7 +153,7 @@
                                 <td>{{ statistics['cases'] }}</td>
                                 <td>
                                     {{ statistics['recovered']['total'] }}
-                                    {% if statistics['recovered']['percentage'] > recoveredPercentage %}
+                                    {% if statistics['recovered']['percentage'] > recoveredPercentage and (statistics['recovered']['percentage'] - recoveredPercentage) != 0 %}
                                         <small style="font-size: 14px;" title="تحسن بنسبة {{ statistics['recovered']['percentage'] - recoveredPercentage }}%+" class="text-success">{{ statistics['recovered']['percentage'] - recoveredPercentage }}%+</small>
                                     {% else %}
                                         <small style="font-size: 14px;" title="إنخفاض بنسبة {{ recoveredPercentage - statistics['recovered']['percentage'] }}%-" class="text-danger">{{ recoveredPercentage - statistics['recovered']['percentage'] }}%-</small>
@@ -161,7 +161,7 @@
                                 </td>
                                 <td>
                                     {{ statistics['deaths']['total'] }}
-                                    {% if statistics['deaths']['percentage'] < deathsPercentage %}
+                                    {% if statistics['deaths']['percentage'] < deathsPercentage and deathsPercentage - statistics['deaths']['percentage'] != 0 %}
                                         <small style="font-size: 14px;" title="إنخفاض بنسبة {{ deathsPercentage - statistics['deaths']['percentage'] }}%-" class="text-success">
                                             {{ deathsPercentage - statistics['deaths']['percentage'] }}%-
                                         </small>
