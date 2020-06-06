@@ -51,7 +51,7 @@
                                 <p class="text-bold text-center"> شهر {{ i }} </p>
                                 <div class="row text-right">
                                     {% for case in cases %}
-                                        {% if lastCase.createdAt|date('Y-m-d') !=  case.createdAt|date('Y-m-d') and case.createdAt|date('m') == i %}
+                                        {% if case.createdAt|date('m') == i %}
                                             <div class="col-xs-3">
                                                 <a class="text-bold dropdown-item text-danger"
                                                    href="{{ path('show_case', {'date': case.createdAt|date('Y-m-d')}) }}">{{ case.createdAt|date('d') }}</a>
