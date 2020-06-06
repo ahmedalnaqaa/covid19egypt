@@ -161,7 +161,7 @@
                                 </td>
                                 <td>
                                     {{ statistics['deaths']['total'] }}
-                                    {% if statistics['deaths']['percentage'] < deathsPercentage and deathsPercentage - statistics['deaths']['percentage'] != 0 %}
+                                    {% if statistics['deaths']['percentage'] < deathsPercentage and (deathsPercentage - statistics['deaths']['percentage']) != 0 %}
                                         <small style="font-size: 14px;" title="إنخفاض بنسبة {{ deathsPercentage - statistics['deaths']['percentage'] }}%-" class="text-success">
                                             {{ deathsPercentage - statistics['deaths']['percentage'] }}%-
                                         </small>
