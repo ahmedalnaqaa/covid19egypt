@@ -304,10 +304,9 @@ class IndexController extends AbstractController
             $recoveredRanges[] = round(($case['totalRecovered'] / $caseToCompareWith['totalRecovered']), 1);
             $deathsRanges[] = round(($case['totalDeaths'] / $caseToCompareWith['totalDeaths']), 1);
         }
-
-        $casesRange = round(array_sum($casesRanges)/14, 1);
-        $recoveredRange = round(array_sum($recoveredRanges)/14, 1);
-        $deathsRange = round(array_sum($deathsRanges)/14, 1);
+        $casesRange = array_sum($casesRanges)/14;
+        $recoveredRange = array_sum($recoveredRanges)/14;
+        $deathsRange = array_sum($deathsRanges)/14;
 
         $statics['cases'] = (int) round($casesRange * $cases[0]['totalCases']);
         $statics['recovered']['total'] = (int) round($recoveredRange * $cases[0]['totalRecovered']);

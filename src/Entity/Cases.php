@@ -26,7 +26,7 @@ class Cases
     /**
      * @var integer
      *
-     * @ORM\Column(name="total_cases", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="total_cases", type="bigint", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
@@ -35,7 +35,7 @@ class Cases
     /**
      * @var integer
      *
-     * @ORM\Column(name="total_recovered", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="total_recovered", type="bigint", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
@@ -44,7 +44,7 @@ class Cases
     /**
      * @var integer
      *
-     * @ORM\Column(name="total_po_to_ne", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="total_po_to_ne", type="bigint", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
@@ -53,7 +53,7 @@ class Cases
     /**
      * @var integer
      *
-     * @ORM\Column(name="total_deaths", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="total_deaths", type="bigint", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
@@ -62,7 +62,7 @@ class Cases
     /**
      * @var integer
      *
-     * @ORM\Column(name="new_daily_cases", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="new_daily_cases", type="integer", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
@@ -71,7 +71,7 @@ class Cases
     /**
      * @var integer
      *
-     * @ORM\Column(name="new_daily_recovered", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="new_daily_recovered", type="integer", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
@@ -80,7 +80,7 @@ class Cases
     /**
      * @var integer
      *
-     * @ORM\Column(name="new_daily_po_to_ne", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="new_daily_po_to_ne", type="integer", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
@@ -89,7 +89,7 @@ class Cases
     /**
      * @var integer
      *
-     * @ORM\Column(name="new_daily_deaths", type="smallint", options={"default" = 0})
+     * @ORM\Column(name="new_daily_deaths", type="integer", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
      */
