@@ -8,7 +8,7 @@ final class QuestionsMap
     const WORK_MEDICAL_FIELD_SCORE = 2;
 
     const CONTACTED_CONFIRMED_CASE_KEY = 'contact-confirmed-case';
-    const CONTACTED_CONFIRMED_CASE_SCORE = 3;
+    const CONTACTED_CONFIRMED_CASE_SCORE = 5;
 
     const TEMPERATURE_KEY = 'temperature';
     const TEMPERATURE_SCORE = 2;
@@ -23,7 +23,7 @@ final class QuestionsMap
     const SORE_THROAT_SCORE = 1;
 
     const TRAVEL_ABROAD_KEY = 'travel-abroad';
-    const TRAVEL_ABROAD_SCORE = 5;
+    const TRAVEL_ABROAD_SCORE = 3;
 
     const CHRONIC_PEOPLE_KEY = 'chronic-people';
     const CHRONIC_PEOPLE_SCORE = 4;
