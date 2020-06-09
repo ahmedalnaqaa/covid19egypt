@@ -47,7 +47,7 @@
             <tbody>
             {% for case in cases %}
                 <tr>
-                    <td class="table-active"><a href="{{ path('show_case', {'date': case.createdAt|date("Y-m-d")}) }}">{{ case.createdAt|date("Y-m-d") }}</a></td>
+                    <td class="table-active"><a href="{{ path('show_case', {'date': case.createdAt|date("d-m-Y")}) }}">{{ case.createdAt|date("d-m-Y") }}</a></td>
                     <td class="table-primary">{{ case.newDailyCases }}</td>
                     <td class="table-success">{{ case.newDailyRecovered }}</td>
                     <td class="table-danger">{{ case.newDailyDeaths }}</td>
@@ -75,7 +75,7 @@
                 </div>
                 <div class="modal-body text-center">
                     <p>يساعد هذا الإختبار على تقييم وضعك الصحي تجاه الإصابة بفيرس كورونا (كوفيد-19)</p>
-                    <a target="_blank" class=" btn btn-warning text-white" href="{{path('corona-test')}}">إبدأ الإختبار</a>
+                    <a class=" btn btn-warning text-white" href="{{path('corona-test')}}">إبدأ الإختبار</a>
                 </div>
             </div>
         </div>

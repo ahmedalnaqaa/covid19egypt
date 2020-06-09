@@ -73,7 +73,6 @@ class Cases
      *
      * @ORM\Column(name="new_daily_recovered", type="integer", options={"default" = 0})
      * @Sonata\ListField()
-     * @Sonata\FormField()
      */
     protected $newDailyRecovered = 0;
 
@@ -82,7 +81,6 @@ class Cases
      *
      * @ORM\Column(name="new_daily_po_to_ne", type="integer", options={"default" = 0})
      * @Sonata\ListField()
-     * @Sonata\FormField()
      */
     protected $newDailyPoToNe = 0;
 
