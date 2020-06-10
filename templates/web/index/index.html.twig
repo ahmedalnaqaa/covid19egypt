@@ -206,20 +206,28 @@
                             <td>{{ statistics['cases'] }}</td>
                             <td>
                                 {{ statistics['recovered']['total'] }}
+                                <br/>
                                 {% if statistics['recovered']['percentage'] > recoveredPercentage %}
-                                    <small style="font-size: 14px;" title="تحسن بنسبة {{ statistics['recovered']['percentage'] - recoveredPercentage }}%+" class="text-success">{{ statistics['recovered']['percentage'] - recoveredPercentage }}%+</small>
+                                    <small style="font-size: 14px;" title="تحسن بنسبة {{ statistics['recovered']['percentage'] - recoveredPercentage }}%+" class="text-success">
+                                        تحسن {{ statistics['recovered']['percentage'] - recoveredPercentage }}%+
+                                    </small>
                                 {% else %}
-                                    <small style="font-size: 14px;" title="إنخفاض بنسبة {{ recoveredPercentage - statistics['recovered']['percentage'] }}%-" class="text-danger">{{ recoveredPercentage - statistics['recovered']['percentage'] }}%-</small>
+                                    <small style="font-size: 14px;" title="إنخفاض بنسبة {{ recoveredPercentage - statistics['recovered']['percentage'] }}%-" class="text-danger">
+                                       إنخفاض {{ recoveredPercentage - statistics['recovered']['percentage'] }}%-
+                                    </small>
                                 {% endif %}
                             </td>
                             <td>
                                 {{ statistics['deaths']['total'] }}
+                                <br/>
                                 {% if statistics['deaths']['percentage'] < deathsPercentage %}
                                     <small style="font-size: 14px;" title="إنخفاض بنسبة {{ deathsPercentage - statistics['deaths']['percentage'] }}%-" class="text-success">
-                                        {{ deathsPercentage - statistics['deaths']['percentage'] }}%-
+                                        إنخفاض {{ deathsPercentage - statistics['deaths']['percentage'] }}%-
                                     </small>
                                 {% else %}
-                                    <small style="font-size: 14px;" title="زيادة بنسبة {{ statistics['deaths']['percentage'] - deathsPercentage }}%" class="text-danger">{{ statistics['deaths']['percentage'] - deathsPercentage }}%+</small>
+                                     <small style="font-size: 14px;" title="زيادة بنسبة {{ statistics['deaths']['percentage'] - deathsPercentage }}%" class="text-danger">
+                                        زيادة {{ statistics['deaths']['percentage'] - deathsPercentage }}%+
+                                     </small>
                                 {% endif %}
                             </td>
                         </tr>
