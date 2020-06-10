@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twilio\Rest\Client;
+
 
 class IndexController extends AbstractController
 {
@@ -34,11 +36,8 @@ class IndexController extends AbstractController
         $cases = $em->createQuery($dql)->getArrayResult();
         /** @var Cases $lastCase */
         $lastCase = $em->getRepository('App:Cases')->findOneBy([], ['createdAt' => 'DESC']);
-        $lastCaseDate = new \DateTime($lastCase->getCreatedAt()->format('Y-m-d'));
-        /** @var Cases $lastTwoWeeks */
-        $lastTwoWeeks = $em->getRepository('App:Cases')->findOneBy(['createdAt' => $lastCaseDate->modify('-13 day')]);
-        $statistics = $this->generateStatistics(array_slice($cases,0, 28));
-        $viewScores = false;
+        $statistics = $this->generateStatistics(array_slice($cases,0, 14));
+        $viewScores = true;
         if ($viewScores) {
             $parentLocations = $em->getRepository('App:Location')->findBy(['parent'=>null]);
             $testsQB = $em->getRepository('App:Test')->createQueryBuilder('test');
@@ -297,16 +296,16 @@ class IndexController extends AbstractController
          * @var  $key
          * @var Cases $case
          */
-        foreach (array_slice($cases,0,14) as $key => $case){
+        foreach (array_slice($cases,0,7) as $key => $case){
             /** @var Cases $caseToCompareWith */
-            $caseToCompareWith = $cases[$key+14];
+            $caseToCompareWith = $cases[$key+7];
             $casesRanges[] = round(($case['totalCases'] / $caseToCompareWith['totalCases']), 1);
             $recoveredRanges[] = round(($case['totalRecovered'] / $caseToCompareWith['totalRecovered']), 1);
             $deathsRanges[] = round(($case['totalDeaths'] / $caseToCompareWith['totalDeaths']), 1);
         }
-        $casesRange = array_sum($casesRanges)/14;
-        $recoveredRange = array_sum($recoveredRanges)/14;
-        $deathsRange = array_sum($deathsRanges)/14;
+        $casesRange = array_sum($casesRanges)/7;
+        $recoveredRange = array_sum($recoveredRanges)/7;
+        $deathsRange = array_sum($deathsRanges)/7;
 
         $statics['cases'] = (int) round($casesRange * $cases[0]['totalCases']);
         $statics['recovered']['total'] = (int) round($recoveredRange * $cases[0]['totalRecovered']);
