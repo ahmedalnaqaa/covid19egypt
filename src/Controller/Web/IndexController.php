@@ -37,7 +37,7 @@ class IndexController extends AbstractController
         /** @var Cases $lastCase */
         $lastCase = $em->getRepository('App:Cases')->findOneBy([], ['createdAt' => 'DESC']);
         $statistics = $this->generateStatistics(array_slice($cases,0, 14));
-        $viewScores = true;
+        $viewScores = false;
         if ($viewScores) {
             $parentLocations = $em->getRepository('App:Location')->findBy(['parent'=>null]);
             $testsQB = $em->getRepository('App:Test')->createQueryBuilder('test');
