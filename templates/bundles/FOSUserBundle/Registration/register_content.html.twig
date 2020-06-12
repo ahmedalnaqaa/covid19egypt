@@ -19,6 +19,7 @@
     {{ form_row(form.username) }}
     {{ form_row(form.email) }}
     {{ form_widget(form.test, {'value' : app.request.get('tid')}) }}
+    {{ form_widget(form.type, {'value' : app.request.get('type')}) }}
     {{ form_widget(form) }}
     <div>
         <input type="submit" class="btn btn-primary" value="{{ 'registration.submit'|trans }}" />

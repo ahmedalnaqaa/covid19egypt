@@ -158,7 +158,9 @@ class IndexController extends AbstractController
     public function askDoctor (Request $request)
     {
         if (!$this->getUser()) {
-            return  $this->redirect($this->generateUrl('fos_user_registration_register', ['tid'=> $request->query->get('tid')], UrlGeneratorInterface::ABSOLUTE_URL), 302);
+            return  $this->redirect($this->generateUrl('fos_user_registration_register',
+                ['tid'=> $request->query->get('tid'), 'type'=> $request->query->get('type')],
+                UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
         /** @var User $user */
         $user = $this->getUser();
@@ -198,7 +200,9 @@ class IndexController extends AbstractController
     public function startIsolation(Request $request)
     {
         if (!$this->getUser()) {
-            return  $this->redirect($this->generateUrl('fos_user_registration_register', ['tid'=> $request->query->get('tid')], UrlGeneratorInterface::ABSOLUTE_URL), 302);
+            return  $this->redirect($this->generateUrl('fos_user_registration_register',
+                ['tid'=> $request->query->get('tid'), 'type'=> $request->query->get('type')],
+                UrlGeneratorInterface::ABSOLUTE_URL), 302);
         }
         /** @var User $user */
         $user = $this->getUser();

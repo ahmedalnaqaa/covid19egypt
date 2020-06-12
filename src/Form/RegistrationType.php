@@ -72,6 +72,9 @@ class RegistrationType extends AbstractType
             ->add('test', HiddenType::class, [
                 'mapped' => false
             ])
+            ->add('type', HiddenType::class, [
+                'mapped' => false
+            ])
         ;
     }
 

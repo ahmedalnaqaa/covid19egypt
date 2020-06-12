@@ -42,6 +42,7 @@ class RegisterationSuccessListener implements EventSubscriberInterface
     public function onRegistrationCompleted(FilterUserResponseEvent $event)
     {
         $test = $event->getRequest()->request->get('fos_user_registration_form')['test'];
+        $type = $event->getRequest()->request->get('fos_user_registration_form')['type'];
         /** @var Test $testObj */
         $testObj = $this->em->getReference('App:Test', $test);
         if ($testObj->getId()) {
@@ -51,15 +52,20 @@ class RegisterationSuccessListener implements EventSubscriberInterface
             $startDate = date('Y-m-d',(strtotime ( "-{$symptomsStartSince} day" , strtotime ( date('Y-m-d')) )));
             $ymd = new \DateTime($startDate);
             $user->setSymptomsStartedAt($ymd);
-            $user->setIsolationStartedAt(new \DateTime());
-            $user->setIsolationEndAt(new \DateTime('+14 day'));
+            if ($type == 'isolation') {
+                $user->setIsolationStartedAt(new \DateTime());
+                $user->setIsolationEndAt(new \DateTime('+14 day'));
+            }
+            $qb = $this->em->createQueryBuilder();
+            $qb->select('u')
+                ->from('App:User', 'u')
+                ->where($qb->expr()->like('u.roles', ':roles'))
+                ->setParameter('roles', '%"ROLE_DOCTOR"%');
+
+            $doctors = $qb->getQuery()->getResult();
+            $assignedDoctor = $doctors[array_rand($doctors)];
             if (in_array('ROLE_USER', $user->getRoles(), true)) {
-                $dql = "SELECT users.assigned_doctor, COUNT(*) AS times FROM users WHERE users.assigned_doctor IS NOT NULL GROUP BY users.assigned_doctor ORDER BY times ASC LIMIT 1";
-                $statement = $this->em->getConnection()->prepare($dql);
-                $statement->execute();
-                $result = $statement->fetchAll();
-                if (!empty($result)) {
-                    $assignedDoctor = $this->em->getReference('App:User', $result[0]['assigned_doctor']);
+                if ($assignedDoctor && $type == 'isolation') {
                     $user->setAssignedDoctor($assignedDoctor);
                 }
             }
@@ -71,7 +77,7 @@ class RegisterationSuccessListener implements EventSubscriberInterface
             $this->em->persist($user);
             $chat = new Chat();
             $chat->setPatient($user);
-            $chat->setDoctor($user->getAssignedDoctor());
+            $chat->setDoctor($assignedDoctor);
             $this->em->persist($chat);
             $this->em->flush();
         }

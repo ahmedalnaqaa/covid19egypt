@@ -39,7 +39,7 @@
                     </svg>
 
                     حاول أن تتواصل مع دكتور عبر الهاتف واستشيره في أعراضك بالتفصيل لتطمئن أكثر. إعزل نفسك في البيت حتى تطمئن على إستقرار وضعك الصحي.
-                    أيضا يمكنك بدء العزل المنزلي من <a href="{{ path('fos_user_registration_register', {'tid': test.id}) }}"> هنا </a>
+                    أيضا يمكنك بدء العزل المنزلي من <a href="{{ path('fos_user_registration_register', {'tid': test.id, 'type': 'isolation'}) }}"> هنا </a>
                 </h6>
             </div>
             <div class="row">
@@ -51,7 +51,7 @@
                         <div class="card-body text-center">
                             إذا كان لديك استفسار عن حالتك, قم بعمل حساب وتواصل مع طبيب متخصص يساعدك في تقييم حالتك
                             <br/>
-                            <a title="إسأل طبيب متخصص في كورونا" href="{{ path('ask-doctor', {'tid': test.id}) }}" class="btn btn-danger">إسأل الأن</a>
+                            <a title="إسأل طبيب متخصص في كورونا" href="{{ path('ask-doctor', {'tid': test.id, 'type': 'ask-doctor'}) }}" class="btn btn-danger">إسأل الأن</a>
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                         <div class="card-body text-center">
                             إذا كنت تريد عزل نفسك في المنزل وتحتاج متابعة طبية, يمكنك عمل حساب والتواصل مع طبيب متخصص خلال فترة عزلك ليساعدك في تقييم حالتك بشكل يومي
                             <br/>
-                            <a title="اعزل نفسك في المنزل" href="{{ path('start-isolation', {'tid': test.id}) }}" class="btn btn-danger">إبدأ العزل</a>
+                            <a title="اعزل نفسك في المنزل" href="{{ path('start-isolation', {'tid': test.id, 'type': 'isolation'}) }}" class="btn btn-danger">إبدأ العزل</a>
                         </div>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                     </svg>
 
                     برجاء التواصل مع الأرقام المعنية لوزارة الصحة (105) لإحتمالية الإصابة .. الحاجة للعلاج وبدء إجراءات العزل الصحي.
-                    أيضا يمكنك بدء العزل المنزلي من <a href="{{ path('start-isolation', {'tid': test.id}) }}"> هنا </a>
+                    أيضا يمكنك بدء العزل المنزلي من <a href="{{ path('start-isolation', {'tid': test.id, 'type': 'isolation'}) }}"> هنا </a>
                 </h6>
             </div>
             <div class="row">
@@ -90,7 +90,7 @@
                         <div class="card-body text-center">
                             إذا كان لديك استفسار عن حالتك, قم بعمل حساب وتواصل مع طبيب متخصص يساعدك في تقييم حالتك
                             <br/>
-                            <a title="إسأل طبيب متخصص في كورونا" href="{{ path('ask-doctor', {'tid': test.id}) }}" class="btn btn-danger">إسأل الأن</a>
+                            <a title="إسأل طبيب متخصص في كورونا" href="{{ path('ask-doctor', {'tid': test.id, 'type': 'ask-doctor'}) }}" class="btn btn-danger">إسأل الأن</a>
                         </div>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                         <div class="card-body text-center">
                             إذا كنت تريد عزل نفسك في المنزل وتحتاج متابعة طبية, يمكنك عمل حساب والتواصل مع طبيب متخصص خلال فترة عزلك ليساعدك في تقييم حالتك بشكل يومي
                             <br/>
-                            <a title="اعزل نفسك في المنزل" href="{{ path('start-isolation', {'tid': test.id}) }}" class="btn btn-danger">إبدأ العزل</a>
+                            <a title="اعزل نفسك في المنزل" href="{{ path('start-isolation', {'tid': test.id, 'type': 'isolation', 'type': 'isolation'}) }}" class="btn btn-danger">إبدأ العزل</a>
                         </div>
                     </div>
                 </div>
