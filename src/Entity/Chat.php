@@ -13,6 +13,8 @@ use KunicMarko\SonataAnnotationBundle\Annotation as Sonata;
  * @ORM\HasLifecycleCallbacks
  * @Sonata\Admin(label="Chat")
  * @ORM\Table(name="chats")
+ * @Sonata\ListAction("show")
+ * @Sonata\ListAction("edit")
  */
 class Chat
 {
@@ -159,5 +161,10 @@ class Chat
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    public function __toString()
+    {
+        return "Doctor: {$this->getDoctor()}, \r\n Patient: {$this->getPatient()}";
     }
 }

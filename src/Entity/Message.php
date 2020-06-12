@@ -13,6 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  * @Sonata\Admin(label="Messages")
  * @ORM\Table(name="messages")
+ * @Sonata\ListAction("show")
+ * @Sonata\ListAction("edit")
  */
 class Message
 {
