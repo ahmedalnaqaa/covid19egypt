@@ -6,6 +6,7 @@ use App\Entity\Chat;
 use App\Entity\Test;
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\FOSUserEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -21,7 +22,7 @@ class RegisterationSuccessListener implements EventSubscriberInterface
 
     private $em;
 
-    public function __construct(UrlGeneratorInterface $router, EntityManager $em)
+    public function __construct(UrlGeneratorInterface $router, EntityManagerInterface $em)
     {
         $this->router = $router;
         $this->em = $em;

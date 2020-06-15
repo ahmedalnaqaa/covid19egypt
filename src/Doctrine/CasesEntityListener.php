@@ -36,6 +36,10 @@ class CasesEntityListener
             $lastCase = $this->em->getRepository('App:Cases')->findOneBy([],['id' => 'DESC']);
             $entity->setNewDailyRecovered(($entity->getTotalRecovered() - $lastCase->getTotalRecovered()));
             $entity->setNewDailyPoToNe(($entity->getTotalPoToNe() - $lastCase->getTotalPoToNe()));
+            $dailySwabs = (4 * ($entity->getTotalPoToNe() - $entity->getTotalRecovered())) + $entity->getNewDailyCases();
+            $totalSwabs = $lastCase->getTotalSwabs() + $dailySwabs;
+            $entity->setNewDailySwabs($dailySwabs);
+            $entity->setTotalSwabs($totalSwabs);
 
             return true;
         }

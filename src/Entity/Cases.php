@@ -62,6 +62,14 @@ class Cases
     /**
      * @var integer
      *
+     * @ORM\Column(name="total_swabs", type="bigint", options={"default" = 0})
+     * @Sonata\ListField()
+     */
+    protected $totalSwabs = 0;
+
+    /**
+     * @var integer
+     *
      * @ORM\Column(name="new_daily_cases", type="integer", options={"default" = 0})
      * @Sonata\ListField()
      * @Sonata\FormField()
@@ -92,6 +100,14 @@ class Cases
      * @Sonata\FormField()
      */
     protected $newDailyDeaths = 0;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="new_daily_swabs", type="integer", options={"default" = 0})
+     * @Sonata\ListField()
+     */
+    protected $newDailySwabs = 0;
 
     /**
      * @var DateTime
@@ -183,6 +199,38 @@ class Cases
     public function setTotalDeaths(int $totalDeaths): void
     {
         $this->totalDeaths = $totalDeaths;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalSwabs(): int
+    {
+        return $this->totalSwabs;
+    }
+
+    /**
+     * @param int $totalSwabs
+     */
+    public function setTotalSwabs($totalSwabs)
+    {
+        $this->totalSwabs = $totalSwabs;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNewDailySwabs()
+    {
+        return $this->newDailySwabs;
+    }
+
+    /**
+     * @param int $newDailySwabs
+     */
+    public function setNewDailySwabs($newDailySwabs)
+    {
+        $this->newDailySwabs = $newDailySwabs;
     }
 
     /**

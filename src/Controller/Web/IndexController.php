@@ -8,6 +8,7 @@ use App\Entity\Location;
 use App\Entity\Test;
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,11 +16,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twilio\Rest\Client;
 
 
 class IndexController extends AbstractController
 {
+
+    /**
+     * @var PaginatorInterface
+     */
+    private $paginator;
+
+    public function __construct(PaginatorInterface $paginator)
+    {
+        $this->paginator = $paginator;
+    }
+
     /**
      * @Route("/", name="index")
      * @Template()
@@ -96,8 +107,7 @@ class IndexController extends AbstractController
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery($dql);
-        $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate(
+        $pagination = $this->paginator->paginate(
             $query, /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
             14
