@@ -48,12 +48,12 @@
             {% for case in cases %}
                 <tr>
                     <td class="table-active"><a href="{{ path('show_case', {'date': case.createdAt|date("d-m-Y")}) }}">{{ case.createdAt|date("d-m-Y") }}</a></td>
-                    <td class="table-primary">{{ case.newDailyCases }}</td>
-                    <td class="table-success">{{ case.newDailyRecovered }}</td>
-                    <td class="table-danger">{{ case.newDailyDeaths }}</td>
-                    <td class="table-primary">{{ case.totalCases }}</td>
-                    <td class="table-success">{{ case.totalRecovered }}</td>
-                    <td class="table-danger">{{ case.totalDeaths }}</td>
+                    <td class=" {% if case.newDailyCases == statistics['maxCase'] %} text-danger {% endif %}">{{ case.newDailyCases }}</td>
+                    <td class=" {% if case.newDailyRecovered == statistics['maxRecovered'] %} text-success {% endif %}">{{ case.newDailyRecovered }}</td>
+                    <td class="  {% if case.newDailyDeaths == statistics['maxDeaths'] %} text-danger {% endif %}">{{ case.newDailyDeaths }}</td>
+                    <td class="">{{ case.totalCases }}</td>
+                    <td class="">{{ case.totalRecovered }}</td>
+                    <td class="">{{ case.totalDeaths }}</td>
                 </tr>
             {% endfor %}
             </tbody>

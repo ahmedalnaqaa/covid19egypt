@@ -47,7 +47,7 @@ class IndexController extends AbstractController
         $cases = $em->createQuery($dql)->getArrayResult();
         /** @var Cases $lastCase */
         $lastCase = $em->getRepository('App:Cases')->findOneBy([], ['createdAt' => 'DESC']);
-        $statistics = $this->generateStatistics(array_slice($cases,0, 14));
+        $statistics = $this->generateEstimates(array_slice($cases,0, 14));
         $viewScores = false;
         if ($viewScores) {
             $parentLocations = $em->getRepository('App:Location')->findBy(['parent'=>null]);
@@ -82,14 +82,17 @@ class IndexController extends AbstractController
                 'viewScores' => $viewScores,
                 'scores' => $locationsScores,
                 'totalScore' => $totalScore,
-                'statistics' => $statistics,
+                'estimates' => $statistics,
+                'statistics' => $this->generateStatistics(date('Y-m-d')),
             ];
         } else {
             return [
                 'lastCase' => $lastCase,
                 'cases' => $cases,
                 'viewScores' => $viewScores,
-                'statistics' => $statistics,
+                'estimates' => $statistics,
+                'statistics' => $this->generateStatistics(date('Y-m-d')),
+
             ];
         }
     }
@@ -117,6 +120,7 @@ class IndexController extends AbstractController
         return [
             'lastCase' => $lastCase,
             'cases' => $pagination,
+            'statistics' => $this->generateStatistics(date('Y-m-d')),
         ];
     }
 
@@ -147,13 +151,14 @@ class IndexController extends AbstractController
         $cases = $em->createQuery($dql)->setParameter(1, new \DateTime($date))->getArrayResult();
         $statistics = [];
         if ($lastCase == $case) {
-            $statistics = $this->generateStatistics($cases);
+            $statistics = $this->generateEstimates($cases);
         }
         return [
             'case' => $case,
             'cases' => $cases,
             'lastCase' => $lastCase,
-            'statistics' => $statistics,
+            'estimates' => $statistics,
+            'statistics' => $this->generateStatistics($date),
         ];
     }
 
@@ -301,7 +306,7 @@ class IndexController extends AbstractController
      * @param array $cases
      * @return mixed
      */
-    private function generateStatistics ($cases = [])
+    private function generateEstimates ($cases = [])
     {
         $casesRanges = [];
         $recoveredRanges = [];
@@ -328,5 +333,57 @@ class IndexController extends AbstractController
         $statics['deaths']['percentage'] = round(($statics['deaths']['total']/$statics['cases']) * 100, 1);
 
         return $statics;
+    }
+
+    private function generateStatistics ($date)
+    {
+        $month = date('m', strtotime($date));
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        return [
+            'maxCase' => $em->getRepository('App:Cases')->findOneBy([], ['newDailyCases' => 'DESC'])->getNewDailyCases(),
+            'maxRecovered' => $em->getRepository('App:Cases')->findOneBy([], ['newDailyRecovered' => 'DESC'])->getNewDailyRecovered(),
+            'maxDeaths' => $em->getRepository('App:Cases')->findOneBy([], ['newDailyDeaths' => 'DESC'])->getNewDailyDeaths(),
+            'maxCaseCurrentMonth' => $this->getMaxResultsInCurrentMonth('newDailyCases', $month),
+            'minCaseCurrentMonth' => $this->getMaxResultsInCurrentMonth('newDailyCases', $month, false),
+            'maxRecoveredCurrentMonth' => $this->getMaxResultsInCurrentMonth('newDailyRecovered', $month),
+            'minRecoveredCurrentMonth' => $this->getMaxResultsInCurrentMonth('newDailyRecovered', $month, false),
+            'maxDeathsCurrentMonth' => $this->getMaxResultsInCurrentMonth('newDailyDeaths', $month),
+            'minDeathsCurrentMonth' => $this->getMaxResultsInCurrentMonth('newDailyDeaths', $month, false),
+        ];
+    }
+
+    /**
+     * @param string $value
+     * @param null $month
+     * @param bool $max
+     * @return int
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    private function getMaxResultsInCurrentMonth ($value = '', $month = '', $max = true)
+    {
+        if ($value == '') {
+            return 0;
+        }
+        if (!$month) {
+            $month = date('m');
+        }
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        $caseQB = $em->getRepository('App:Cases')->createQueryBuilder('cases');
+        if ($max) {
+            $caseQB->select($caseQB->expr()->max('cases.'.$value.''));
+        } else {
+            $caseQB->select($caseQB->expr()->min('cases.'.$value.''));
+        }
+        $caseQB
+            ->andWhere($caseQB->expr()->between('cases.createdAt', ':start_date', ':end_date'))
+            ->setParameter(':start_date', date('Y-'.$month.'-01 00:00:00'))
+            ->setParameter(':end_date', date("Y-'.$month.'-31 00:00:00"))
+        ;
+
+        return (int) $caseQB->getQuery()->getSingleScalarResult();
     }
 }

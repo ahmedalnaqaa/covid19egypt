@@ -63,7 +63,7 @@
     <div class="row">
         {% if lastCase.createdAt|date('Y-m-d') == case.createdAt|date('Y-m-d') %}
             <div class="col-md-6">
-                <div class="card mb-4 box-shadow border-light">
+                <div class="card box-shadow border-light">
                     <div class="card-header text-bold text-center">
                         <a class="list-unstyled text-danger
                      dropdown-toggle" data-toggle="collapse" href="#collapseExample"
@@ -120,9 +120,44 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card mb-4 border-light">
+                <div class="card border-light">
                     <div id="piechart" class="chart row"></div>
                 </div>
+            </div>
+
+            <div class="col-md-12">
+                <ul class="mt-0 mb-0">
+                    {% if case.newDailyCases == statistics['minCaseCurrentMonth'] %}
+                        <li><span class="text-success"> أقل عدد إصابات هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyRecovered == statistics['maxRecovered'] %}
+                        <li><span class="text-success">أعلى عدد حالات شفاء حتى الأن</span></li>
+                    {% endif %}
+                    {% if case.newDailyRecovered == statistics['maxRecoveredCurrentMonth'] %}
+                        <li><span class="text-success">أعلى عدد حالات شفاء هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyDeaths == statistics['minDeathsCurrentMonth'] %}
+                        <li><span class="text-success">أقل عدد وفيات هذا الشهر</span></li>
+                    {% endif %}
+                </ul>
+                <ul class="mt-0 mb-0">
+                    {% if case.newDailyCases == statistics['maxCaseCurrentMonth'] %}
+                        <li><span class="text-danger"> أعلى عدد إصابات هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyCases == statistics['maxCase'] %}
+                        <li><span class="text-danger"> أعلى عدد إصابات حتى الأن</span></li>
+                    {% endif %}
+                    {% if case.newDailyRecovered == statistics['minRecoveredCurrentMonth'] %}
+                        <li><span class="text-danger">أقل عدد حالات شفاء هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyDeaths == statistics['maxDeathsCurrentMonth'] %}
+                        <li><span class="text-danger">أعلى عدد وفيات هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyDeaths == statistics['maxDeaths'] %}
+                        <li><span class="text-danger">أعلى عدد وفيات حتى الأن</span></li>
+                    {% endif %}
+                </ul>
+                <br/>
             </div>
 
             <div class="col-md-6">
@@ -151,30 +186,30 @@
                                 {% set recoveredPercentage = ((lastCase.totalRecovered / lastCase.totalCases) * 100)|round(1) %}
                                 {% set deathsPercentage = ((lastCase.totalDeaths / lastCase.totalCases) * 100)|round(1) %}
                                 <th scope="row">بعد أسبوعين</th>
-                                <td>{{ statistics['cases'] }}</td>
+                                <td>{{ estimates['cases'] }}</td>
                                 <td>
-                                    {{ statistics['recovered']['total'] }}
+                                    {{ estimates['recovered']['total'] }}
                                     <br/>
-                                    {% if statistics['recovered']['percentage'] > recoveredPercentage %}
-                                        <small style="font-size: 14px;" title="تحسن بنسبة {{ statistics['recovered']['percentage'] - recoveredPercentage }}%+" class="text-success">
-                                            تحسن {{ statistics['recovered']['percentage'] - recoveredPercentage }}%+
+                                    {% if estimates['recovered']['percentage'] > recoveredPercentage %}
+                                        <small style="font-size: 14px;" title="تحسن بنسبة {{ estimates['recovered']['percentage'] - recoveredPercentage }}%+" class="text-success">
+                                            تحسن {{ estimates['recovered']['percentage'] - recoveredPercentage }}%+
                                         </small>
                                     {% else %}
-                                        <small style="font-size: 14px;" title="إنخفاض بنسبة {{ recoveredPercentage - statistics['recovered']['percentage'] }}%-" class="text-danger">
-                                            إنخفاض {{ recoveredPercentage - statistics['recovered']['percentage'] }}%-
+                                        <small style="font-size: 14px;" title="إنخفاض بنسبة {{ recoveredPercentage - estimates['recovered']['percentage'] }}%-" class="text-danger">
+                                            إنخفاض {{ recoveredPercentage - estimates['recovered']['percentage'] }}%-
                                         </small>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ statistics['deaths']['total'] }}
+                                    {{ estimates['deaths']['total'] }}
                                     <br/>
-                                    {% if statistics['deaths']['percentage'] < deathsPercentage %}
-                                        <small style="font-size: 14px;" title="إنخفاض بنسبة {{ deathsPercentage - statistics['deaths']['percentage'] }}%-" class="text-success">
-                                            إنخفاض {{ deathsPercentage - statistics['deaths']['percentage'] }}%-
+                                    {% if estimates['deaths']['percentage'] < deathsPercentage %}
+                                        <small style="font-size: 14px;" title="إنخفاض بنسبة {{ deathsPercentage - estimates['deaths']['percentage'] }}%-" class="text-success">
+                                            إنخفاض {{ deathsPercentage - estimates['deaths']['percentage'] }}%-
                                         </small>
                                     {% else %}
-                                        <small style="font-size: 14px;" title="زيادة بنسبة {{ statistics['deaths']['percentage'] - deathsPercentage }}%" class="text-danger">
-                                            زيادة {{ statistics['deaths']['percentage'] - deathsPercentage }}%+
+                                        <small style="font-size: 14px;" title="زيادة بنسبة {{ estimates['deaths']['percentage'] - deathsPercentage }}%" class="text-danger">
+                                            زيادة {{ estimates['deaths']['percentage'] - deathsPercentage }}%+
                                         </small>
                                     {% endif %}
                                 </td>
@@ -282,8 +317,42 @@
                     </div>
                 </div>
             </div>
-            <div class="text-center col-md-12 mt-0">
-                <small style="position: relative; top: -25px;" class="mb-3 mt-0"><a class="text-secondary" href="https://www.facebook.com/egypt.mohp/" target="_blank"> المصدر: egypt.mohp@</a></small>
+            <div class="text-center col-md-12 mt-0" style="position: relative; top: -25px;" >
+                <small class="mb-3 mt-0"><a class="text-secondary" href="https://www.facebook.com/egypt.mohp/" target="_blank"> المصدر: egypt.mohp@</a></small>
+            </div>
+            <div class="col-md-12">
+                <ul class="mt-0 mb-0">
+                    {% if case.newDailyCases == statistics['minCaseCurrentMonth'] %}
+                        <li><span class="text-success"> أقل عدد إصابات هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyRecovered == statistics['maxRecovered'] %}
+                        <li><span class="text-success">أعلى عدد حالات شفاء حتى الأن</span></li>
+                    {% endif %}
+                    {% if case.newDailyRecovered == statistics['maxRecoveredCurrentMonth'] %}
+                        <li><span class="text-success">أعلى عدد حالات شفاء هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyDeaths == statistics['minDeathsCurrentMonth'] %}
+                        <li><span class="text-success">أقل عدد وفيات هذا الشهر</span></li>
+                    {% endif %}
+                </ul>
+                <ul class="mt-0 mb-0">
+                    {% if case.newDailyCases == statistics['maxCaseCurrentMonth'] %}
+                        <li><span class="text-danger"> أعلى عدد إصابات هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyCases == statistics['maxCase'] %}
+                        <li><span class="text-danger"> أعلى عدد إصابات حتى الأن</span></li>
+                    {% endif %}
+                    {% if case.newDailyRecovered == statistics['minRecoveredCurrentMonth'] %}
+                        <li><span class="text-danger">أقل عدد حالات شفاء هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyDeaths == statistics['maxDeathsCurrentMonth'] %}
+                        <li><span class="text-danger">أعلى عدد وفيات هذا الشهر</span></li>
+                    {% endif %}
+                    {% if case.newDailyDeaths == statistics['maxDeaths'] %}
+                        <li><span class="text-danger">أعلى عدد وفيات حتى الأن</span></li>
+                    {% endif %}
+                </ul>
+                <br/>
             </div>
         {% endif %}
         <div class="col-md-12 text-center mb-4">
@@ -410,9 +479,9 @@
 
             var data = google.visualization.arrayToDataTable([
                 ['Task', 'Hours per Day'],
-                ['حالات الشفاء', {{ statistics['recovered']['total'] }}],
-                ['الوفيات',  {{ statistics['deaths']['total'] }}],
-                ['حالات مصابة نشطة', {{ statistics['cases'] - (statistics['recovered']['total'] + statistics['deaths']['total']) }}],
+                ['حالات الشفاء', {{ estimates['recovered']['total'] }}],
+                ['الوفيات',  {{ estimates['deaths']['total'] }}],
+                ['حالات مصابة نشطة', {{ estimates['cases'] - (estimates['recovered']['total'] + estimates['deaths']['total']) }}],
             ]);
 
             var options = {
