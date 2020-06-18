@@ -42,8 +42,13 @@
                     <a class="list-unstyled text-danger
                      dropdown-toggle" data-toggle="collapse" href="#collapseExample"
                        aria-expanded="false" aria-controls="collapseExample" style="text-underline: none;">
-                        <strong class="text-danger show-dates">أخر تحديث
-                            بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
+                        <strong class="text-danger show-dates">
+                            {% if lastCase.createdAt|date('Y-m-d') == "now"|date('Y-m-d') %}
+                                تحديث اليوم بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}
+                            {% else %}
+                                أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}
+                            {% endif %}
+                        </strong>
                     </a>
                     <div class="collapse" id="collapseExample">
                         <div class="card card-body">
@@ -333,9 +338,9 @@
 
             var data = new google.visualization.DataTable();
             data.addColumn('date', '');
-            data.addColumn('number', 'حالات جديدة');
-            data.addColumn('number', 'حالات الشفاء');
-            data.addColumn('number', 'حالات الوفاة');
+            data.addColumn('number', 'الإصابات');
+            data.addColumn('number', 'الشفاء');
+            data.addColumn('number', 'الوفيات');
 
             data.addRows([
                 {% for case in cases|slice(0,50) %}
