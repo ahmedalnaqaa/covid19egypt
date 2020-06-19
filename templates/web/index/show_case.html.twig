@@ -68,8 +68,13 @@
                         <a class="list-unstyled text-danger
                      dropdown-toggle" data-toggle="collapse" href="#collapseExample"
                            aria-expanded="false" aria-controls="collapseExample" style="text-underline: none;">
-                            <strong class="text-danger show-dates">أخر تحديث
-                                بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}</strong>
+                            <strong class="text-danger show-dates">
+                                {% if lastCase.createdAt|date('Y-m-d') == "now"|date('Y-m-d') %}
+                                    تحديث اليوم بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}
+                                {% else %}
+                                    أخر تحديث بتاريخ {{ lastCase.createdAt|date('d-m-Y') }}
+                                {% endif %}
+                            </strong>
                         </a>
                         <div class="collapse" id="collapseExample">
                             <div class="card card-body">
@@ -229,7 +234,7 @@
                     <a class="list-unstyled text-danger
                      dropdown-toggle" data-toggle="collapse" href="#collapseExample"
                        aria-expanded="false" aria-controls="collapseExample" style="text-underline: none;">
-                        <strong class="text-danger show-dates">{{ case.createdAt|date('d-m-Y') }}</strong>
+                        <strong class="text-danger show-dates">{{ case.createdAt|date('Y-m-d') }}</strong>
                     </a>
                     <div class="collapse" id="collapseExample">
                         <div class="card card-body">
