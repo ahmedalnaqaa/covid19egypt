@@ -42,7 +42,7 @@ class ExceptionListener
         if(strpos($ip,',') !== false) {
             $ip = substr($ip,0,strpos($ip,','));
         }
-        if ($ip) {
+        if ($ip && getenv('APP_ENV') == 'prod') {
             /** @var BlackList $blacklisted */
             $blacklisted = $this->em->getRepository('App:BlackList')->findOneByIp($ip);
             if ($blacklisted && $event->getThrowable()->getMessage() != 'No route found for "GET /favicon.ico"') {

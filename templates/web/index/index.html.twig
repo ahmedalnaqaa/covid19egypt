@@ -254,7 +254,7 @@
                                     </small>
                                 {% else %}
                                     <small style="font-size: 14px;" title="إنخفاض بنسبة {{ recoveredPercentage - estimates['recovered']['percentage'] }}%-" class="text-danger">
-                                       إنخفاض {{ recoveredPercentage - estimates['recovered']['percentage'] }}%-
+                                       إنخفاض {{ (recoveredPercentage - estimates['recovered']['percentage'])|round(1) }}%-
                                     </small>
                                 {% endif %}
                             </td>

@@ -308,28 +308,28 @@ class IndexController extends AbstractController
      */
     private function generateEstimates ($cases = [])
     {
-        $casesRanges = [];
-        $recoveredRanges = [];
-        $deathsRanges = [];
+        $casesRanges = 0;
+        $recoveredRanges = 0;
+        $deathsRanges = 0;
         /**
          * @var  $key
          * @var Cases $case
          */
-        foreach (array_slice($cases,0,7) as $key => $case){
+        foreach (array_slice($cases,0,14) as $key => $case){
             /** @var Cases $caseToCompareWith */
-            $caseToCompareWith = $cases[$key+7];
-            $casesRanges[] = round(($case['totalCases'] / $caseToCompareWith['totalCases']), 1);
-            $recoveredRanges[] = round(($case['totalRecovered'] / $caseToCompareWith['totalRecovered']), 1);
-            $deathsRanges[] = round(($case['totalDeaths'] / $caseToCompareWith['totalDeaths']), 1);
+            $casesRanges += $case['newDailyCases'];
+            $recoveredRanges += $case['newDailyRecovered'];
+            $deathsRanges += $case['newDailyDeaths'];
         }
-        $casesRange = array_sum($casesRanges)/7;
-        $recoveredRange = array_sum($recoveredRanges)/7;
-        $deathsRange = array_sum($deathsRanges)/7;
 
-        $statics['cases'] = (int) round($casesRange * $cases[0]['totalCases']);
-        $statics['recovered']['total'] = (int) round($recoveredRange * $cases[0]['totalRecovered']);
+        $casesRange = ($casesRanges/14) * 14;
+        $recoveredRange = ($recoveredRanges/14) * 14;
+        $deathsRange = ($deathsRanges/14) * 14;
+
+        $statics['cases'] = (int) round($casesRange + $cases[0]['totalCases']);
+        $statics['recovered']['total'] = (int) round($recoveredRange + $cases[0]['totalRecovered']);
         $statics['recovered']['percentage'] = round(($statics['recovered']['total']/$statics['cases']) * 100, 1);
-        $statics['deaths']['total'] = (int) round($deathsRange * $cases[0]['totalDeaths']);
+        $statics['deaths']['total'] = (int) round($deathsRange + $cases[0]['totalDeaths']);
         $statics['deaths']['percentage'] = round(($statics['deaths']['total']/$statics['cases']) * 100, 1);
 
         return $statics;
