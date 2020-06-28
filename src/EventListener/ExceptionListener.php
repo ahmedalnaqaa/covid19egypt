@@ -42,8 +42,6 @@ class ExceptionListener
         if(strpos($ip,',') !== false) {
             $ip = substr($ip,0,strpos($ip,','));
         }
-        echo getenv('APP_ENV');
-        exit();
         if ($ip) {
             /** @var BlackList $blacklisted */
             $blacklisted = $this->em->getRepository('App:BlackList')->findOneByIp($ip);
