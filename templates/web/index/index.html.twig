@@ -218,63 +218,65 @@
     {% endif %}
     <br/><hr/><br/>
     <h4 class="text-right"> معدل التضاعف الأسبوعي - </h4>
-    <table class="table table-bordered text-center" style="direction: rtl">
-        <thead class="thead-light">
-        <tr>
-            <th scope="col">التاريخ</th>
-            <th scope="col">الأسبوع</th>
-            <th scope="col">الإصابات</th>
-            <th scope="col">الزيادة الإسبوعية</th>
-            <th scope="col">التضاعف الأسبوعي</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% set week = ((cases|length / 7)|round|number_format) + 1 %}
-        {% set weeklyInc = 0 %}
-        {% for case in cases %}
-            {% if loop.index ==  1 and case.createdAt|date("D") != "Fri" %}
-                {% set days = ["Fri","Thu","Wed","Tue","Mon","Sun","Sat"] %}
-                {% for day in days %}
-                    {% if day == case.createdAt|date("D") %}
-                        {% set thisWeek = 8 - loop.index %}
+    <div class="table-responsive">
+        <table class="table table-bordered text-center" style="direction: rtl">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">التاريخ</th>
+                <th scope="col">الأسبوع</th>
+                <th scope="col">الإصابات</th>
+                <th scope="col">الزيادة الإسبوعية</th>
+                <th scope="col">التضاعف الأسبوعي</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set week = ((cases|length / 7)|round|number_format) + 1 %}
+            {% set weeklyInc = 0 %}
+            {% for case in cases %}
+                {% if loop.index ==  1 and case.createdAt|date("D") != "Fri" %}
+                    {% set days = ["Fri","Thu","Wed","Tue","Mon","Sun","Sat"] %}
+                    {% for day in days %}
+                        {% if day == case.createdAt|date("D") %}
+                            {% set thisWeek = 8 - loop.index %}
+                            <tr>
+                                <td class="table-active">{{ case.createdAt|date('Y-m-d') }}</td>
+                                <td>{{ week }}</td>
+                                <td>{{ case.totalCases }}</td>
+                                <td>{{ case.totalCases - (cases[thisWeek]).totalCases }}</td>
+                                <td>لم ينته بعد</td>
+                            </tr>
+                            {% set weeklyInc = cases[thisWeek].totalCases %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% if case.createdAt|date("D") == "Fri" %}
+                    {% set week = week - 1 %}
+                    {% set nextWeek = loop.index + 6 %}
+                    {% if cases[nextWeek] is defined %}
                         <tr>
                             <td class="table-active">{{ case.createdAt|date('Y-m-d') }}</td>
                             <td>{{ week }}</td>
                             <td>{{ case.totalCases }}</td>
-                            <td>{{ case.totalCases - (cases[thisWeek]).totalCases }}</td>
-                            <td>لم ينته بعد</td>
-                        </tr>
-                        {% set weeklyInc = cases[thisWeek].totalCases %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            {% if case.createdAt|date("D") == "Fri" %}
-                {% set week = week - 1 %}
-                {% set nextWeek = loop.index + 6 %}
-                {% if cases[nextWeek] is defined %}
-                    <tr>
-                        <td class="table-active">{{ case.createdAt|date('Y-m-d') }}</td>
-                        <td>{{ week }}</td>
-                        <td>{{ case.totalCases }}</td>
-                        <td>{{ case.totalCases - (cases[nextWeek]).totalCases }}</td>
-                        {% if (case.totalCases - (cases[nextWeek]).totalCases) != 0 %}
-                            {% set per = (weeklyInc / (cases[nextWeek]).totalCases)|round(2) %}
-                            {% if per <= 1.3 %}
-                                <td class="table-success">{{ per }}</td>
-                            {% elseif per <= 1.6 and per > 1.3 %}
-                                <td class="table-warning">{{ per }}</td>
+                            <td>{{ case.totalCases - (cases[nextWeek]).totalCases }}</td>
+                            {% if (case.totalCases - (cases[nextWeek]).totalCases) != 0 %}
+                                {% set per = (weeklyInc / (cases[nextWeek]).totalCases)|round(2) %}
+                                {% if per <= 1.3 %}
+                                    <td class="table-success">{{ per }}</td>
+                                {% elseif per <= 1.6 and per > 1.3 %}
+                                    <td class="table-warning">{{ per }}</td>
+                                {% else %}
+                                    <td class="table-danger">{{per}}</td>
+                                {% endif %}
                             {% else %}
-                                <td class="table-danger">{{per}}</td>
+                                <td>-</td>
                             {% endif %}
-                        {% else %}
-                        <td>-</td>
-                        {% endif %}
-                    </tr>
-                    {% set weeklyInc = (cases[nextWeek]).totalCases %}
+                        </tr>
+                        {% set weeklyInc = (cases[nextWeek]).totalCases %}
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-        {% endfor %}
-    </table>
+            {% endfor %}
+        </table>
+    </div>
     <br/>
     <div class="row" style="direction: rtl;">
         <div class="col-md-6">
