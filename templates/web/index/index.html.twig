@@ -239,7 +239,7 @@
                         {% if day == case.createdAt|date("D") %}
                             {% set thisWeek = 8 - loop.index %}
                             <tr>
-                                <td class="table-active">{{ case.createdAt|date('Y-m-d') }}</td>
+                                <td class="table-active">{{ case.createdAt|date('d-m-Y') }}</td>
                                 <td>{{ week }}</td>
                                 <td>{{ case.totalCases }}</td>
                                 <td>{{ case.totalCases - (cases[thisWeek]).totalCases }}</td>
@@ -254,7 +254,7 @@
                     {% set nextWeek = loop.index + 6 %}
                     {% if cases[nextWeek] is defined %}
                         <tr>
-                            <td class="table-active">{{ case.createdAt|date('Y-m-d') }}</td>
+                            <td class="table-active">{{ case.createdAt|date('d-m-Y') }}</td>
                             <td>{{ week }}</td>
                             <td>{{ case.totalCases }}</td>
                             <td>{{ case.totalCases - (cases[nextWeek]).totalCases }}</td>
